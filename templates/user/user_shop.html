@@ -1,0 +1,553 @@
+{% extends 'layouts/main.html' %}
+{% load static %}
+
+{% block body %}
+
+<div class="hero-wrap hero-bread" style="background-image: url({% static 'images/hero.png' %})">
+  <div class="container">
+    <div class="row no-gutters slider-text align-items-center justify-content-center">
+      <div class="col-md-9 ftco-animate text-center">
+        <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'home'%}">Home</a></span> <span>Products</span></p>
+        <h1 class="mb-0 bread">Shop With Mersa</h1>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<section class="ftco-section">
+  <div class="container">
+    <section class="section-pagetop bg">
+      <div class="container">
+        <h1 class="title-page text-center text-primary  bread">Shop By Variant</h1>  
+      </div> <!-- container //  -->
+    </section>
+  </div>
+  </section>
+
+
+<section class="section-content padding-y">
+  <div class="container">
+  <div class="row">
+    <aside class="col-md-3 col-8 col-sm-8  my-5">
+      
+  <div class="card">
+    <form id="filter-form"  action="{% url 'shop' %}" method ="post"> {% csrf_token %}
+    <article class="filter-group">
+      <header class="card-header">
+        <a href="#" data-toggle="collapse" data-target="#collapse_4" aria-expanded="true" class="">
+          <i class="icon-control fa fa-chevron-down"></i>
+          <h6 class="title">Categories </h6>
+        </a>
+      </header>
+      <div class="filter-content collapse show" id="collapse_4" style="">
+        <div class="card-body">
+          <label class="checkbox-btn">
+            <input type="checkbox" name="all_category" value="all" onclick="toggleAllCategories()">
+            <span class="btn btn-light">All Category</span>
+          </label>
+          {% for cat in category  %}
+            <label class="checkbox-btn">
+              <input type="checkbox" name="category_name_{{ cat.id }}" value="{{ cat.id }}" onclick="handleCategoryCheckbox()">
+              <span class="btn btn-light">{{ cat.category_name }}</span>
+            </label>
+          {% endfor %}
+  
+         
+  
+          
+      </div><!-- card-body.// -->
+      </div>
+    </article> 
+    
+    <article class="filter-group">
+      <header class="card-header">
+        <a href="#" data-toggle="collapse" data-target="#collapse_3" aria-expanded="true" class="">
+          <i class="icon-control fa fa-chevron-down"></i>
+          <h6 class="title">Price range </h6>
+        </a>
+      </header>
+      <div class="filter-content collapse show" id="collapse_3" style="">
+        <div class="card-body">
+          
+          <div class="form-row">
+          <div class="form-group col-md-6">
+            <label>Min</label>
+            <input id="minValue" class="form-control" name="minValue" placeholder="₹0" type="number" min="0" step="50">          
+          </div>
+          <div class="form-group text-right col-md-6">
+            <label>Max</label>
+            <input id="maxValue" class="form-control" name="maxValue" placeholder="₹2000+" type="number" min="0" step="50">
+
+          </div>
+          </div> <!-- form-row.// -->
+          
+        </div><!-- card-body.// -->
+      </div>
+    </article> <!-- filter-group .// -->
+
+    <article class="filter-group">
+      <header class="card-header">
+          <a href="#" data-toggle="collapse" data-target="#collapse_4" aria-expanded="true" class="">
+              <i class="icon-control fa fa-chevron-down"></i>
+              <h6 class="title">Sort By</h6>
+          </a>
+      </header>
+      <div class="filter-content collapse show" id="collapse_4" style="">
+
+  
+     <div class="card-body">
+        <div class="form-group">
+        <label>Sort by:</label>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="sort_by" value="low_to_high" id="sortLowToHigh">
+          <label class="form-check-label" for="sortLowToHigh">Price Low to High</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="sort_by" value="high_to_low" id="sortHighToLow">
+          <label class="form-check-label" for="sortHighToLow">Price High to Low</label>
+        </div>
+      </div>
+              <button type="submit" class="btn btn-block btn-primary">Apply</button>
+          </div><!-- card-body.// -->
+      </div>
+  </article> <!-- filter-group .// -->
+
+  </form>
+  </div> <!-- card.// -->
+  
+    </aside> <!-- col.// -->
+
+    <main class="col-md-9">
+  
+  <header class="border-bottom mb-4 pb-3">
+      <div class="form-inline">
+        <span class="mr-md-auto">{{v_count}}{{var_count}} Items found</span>
+        
+      </div>
+  </header><!-- sect-heading -->
+
+
+
+
+
+
+
+
+
+
+
+  
+        {% comment %} <h2 class="text-center text-bold">Shop by Variant</h2> {% endcomment %}
+       
+
+    <div class="row">
+      {% if variants %}
+        {% for variant in variants %}
+        <div class="col-md-6 col-lg-4 col-sm-6 col-6 ftco-animate">
+          <div class="product">
+            <a href="{% url 'shop_by_product' variant.product_id variant.id %}" class="img-prod">
+              <div style="display: flex; justify-content: center; align-items: center; height: 250px;">
+                {% for image in variant.images.all %}
+                <img class="img-fluid" src="{{ image.image1.url }}" alt="img" style="max-width: 90%; max-height: 80%;">
+                {% endfor %}
+              </div>
+              {% comment %} {% for image in variant.images.all %}
+              <img class="img-fluid" src="{{ image.image1.url }}" alt="img" style="max-width: 90%; max-height: 80%;">
+              {% endfor %} {% endcomment %}
+              <div class="overlay"></div>
+            </a>
+            <div class="text py-3 pb-4 px-3 text-center">
+              <h3><a href="#">{{ variant.product }} <br>{{ variant.variant_name }}</a></h3>
+              <div class="d-flex">
+                <div class="pricing">
+                  <p class="price">
+                    <span class="mr-2 price-dc">₹{{variant.mrp}}</span>
+                    <span class="price-sale">₹{{variant.offer_price}}</span>
+                  </p>
+                </div>
+              </div>
+              <div class="bottom-area d-flex px-3">
+                <div class="m-auto d-flex">
+                  <a href="#" class="add-to-cart d-flex justify-content-center align-items-center text-center">
+                    <span><i class="ion-ios-menu"></i></span>
+                  </a>
+                  <a href="#" class="buy-now d-flex justify-content-center align-items-center mx-1">
+                    <span><i class="ion-ios-cart"></i></span>
+                  </a>
+                  <a href="#" class="heart d-flex justify-content-center align-items-center ">
+                    <span><i class="ion-ios-heart"></i></span>
+                  </a>
+                </div>
+              </div>
+              
+            </div>
+            
+          </div>
+        </div>
+        
+        
+
+        {% endfor %}
+        {% else %}
+        <!-- Display a message when no items are found -->
+        <div class="no-results">
+            <p class="text-center">No items found.</p>
+        </div>
+    {% endif %}
+    
+      </div>
+
+
+ <div class="row mt-5 pagination">
+  <div class="col text-center">
+    <div class="block-27">
+      {% if variants.has_other_pages %}
+      <ul>
+        {% if variants.has_previous %}
+        <li class="page-item active" ><a  href="?page={{variants.previous_page_number}}">&lt;</a></li>
+        {% else %}
+        <li class="page-item disabled"><a href="">&lt;</a></li>
+        {% endif %}
+        {% for i in variants.paginator.page_range %}
+           {% if variants.number == i  %}
+              <li class="page-item deactivate"><a class="page-link" href="#">{{i}}</a></li>
+              {% else %}
+              <li class="page-item"><a href="?page={{i}}">{{i}}</a></li>
+           {% endif %}
+        {% endfor %}
+        {% if variants.has_next %}
+          <li class=" page-item active"><a href="?page={{variants.next_page_number}}">&gt;</a></li>
+            {% else %}
+               <li class=" page-item di"><a href="#">&gt;</a></li>
+            {% endif %}
+      </ul>
+      {% endif %}
+    </div>
+  </div> 
+</div>
+
+</div>
+</section>
+
+
+<!-- JavaScript function to handle checkbox interactions -->
+<script>
+function toggleAllCategories() {
+  const allCategoryCheckbox = document.querySelector('input[name="all_category"]');
+  const categoryCheckboxes = document.querySelectorAll('input[name^="category_name_"]');
+
+  if (allCategoryCheckbox.checked) {
+      // If "All Category" is checked, deselect all individual categories
+      categoryCheckboxes.forEach(checkbox => (checkbox.checked = false));
+  }
+}
+
+function handleCategoryCheckbox() {
+  const allCategoryCheckbox = document.querySelector('input[name="all_category"]');
+  const categoryCheckboxes = document.querySelectorAll('input[name^="category_name_"]');
+
+  // Check if any individual category is checked
+  const anyCategoryChecked = Array.from(categoryCheckboxes).some(checkbox => checkbox.checked);
+
+  if (anyCategoryChecked) {
+      // If any individual category is checked, uncheck "All Category"
+      allCategoryCheckbox.checked = false;
+  }
+}
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Get the selected category values from local storage (if available)
+    const selectedCategories = JSON.parse(localStorage.getItem('selectedCategories')) || [];
+  
+    // Loop through the category checkboxes and set their checked state
+    const categoryCheckboxes = document.querySelectorAll('[name^="category_name_"]');
+    categoryCheckboxes.forEach(checkbox => {
+      const categoryId = checkbox.value;
+      checkbox.checked = selectedCategories.includes(categoryId);
+    });
+  
+    // Event listener to update selected categories on checkbox change
+    categoryCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', function() {
+        const categoryId = this.value;
+        if (this.checked) {
+          // Add the category to the selected categories list
+          selectedCategories.push(categoryId);
+        } else {
+          // Remove the category from the selected categories list
+          const index = selectedCategories.indexOf(categoryId);
+          if (index !== -1) {
+            selectedCategories.splice(index, 1);
+          }
+        }
+        // Store the updated selected categories in local storage
+        localStorage.setItem('selectedCategories', JSON.stringify(selectedCategories));
+      });
+    });
+  });
+  </script>
+
+
+  
+
+
+{% endblock %}
+
+
+
+
+
+<div class="hero-wrap hero-bread" style="background-image: url({% static 'images/hero.png' %})">
+  <div class="container">
+    <div class="row no-gutters slider-text align-items-center justify-content-center">
+      <div class="col-md-9 ftco-animate text-center">
+        <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'home'%}">Home</a></span> <span>Products</span></p>
+        <h1 class="mb-0 bread">Shop With Mersa</h1>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="ftco-section">
+  <div class="container">
+    <section class="section-pagetop bg">
+      <div class="container">
+        <h2 class="title-page text-center text-primary bread">Shop By Variant</h2>  
+      </div> <!-- container //  -->
+    </section>
+  </div>
+</section>
+
+<section class="section-content padding-y">
+  <div class="container">
+    <div class="row">
+      <aside class="col-md-3 col-8 col-sm-8 mt-5 my-5">
+        <div class="card">
+          <form id="filter-form" action="{% url 'shop' %}" method="post">
+            {% csrf_token %}
+
+            <article class="filter-group">
+              <header class="card-header">
+                <a href="#" data-toggle="collapse" data-target="#collapse_4" aria-expanded="true" class="">
+                  <i class="icon-control fa fa-chevron-down"></i>
+                  <h6 class="title">Categories </h6>
+                </a>
+              </header>
+              <div class="filter-content collapse show" id="collapse_4" style="">
+                <div class="card-body">
+                  <label class="checkbox-btn">
+                    <input type="checkbox" name="all_category" value="all" onclick="toggleAllCategories()">
+                    <span class="btn btn-light">All Category</span>
+                  </label>
+                  {% for cat in category %}
+                  <label class="checkbox-btn">
+                    <input type="checkbox" name="category_name_{{ cat.id }}" value="{{ cat.id }}" onclick="handleCategoryCheckbox()">
+                    <span class="btn btn-light">{{ cat.category_name }}</span>
+                  </label>
+                  {% endfor %}
+                </div><!-- card-body.// -->
+              </div>
+            </article> 
+
+            <article class="filter-group">
+              <header class="card-header">
+                <a href="#" data-toggle="collapse" data-target="#collapse_3" aria-expanded="true" class="">
+                  <i class="icon-control fa fa-chevron-down"></i>
+                  <h6 class="title">Price range </h6>
+                </a>
+              </header>
+              <div class="filter-content collapse show" id="collapse_3" style="">
+                <div class="card-body">
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <label>Min</label>
+                      <input id="minValue" class="form-control" name="minValue" placeholder="₹0" type="number" min="0" step="50">          
+                    </div>
+                    <div class="form-group text-right col-md-6">
+                      <label>Max</label>
+                      <input id="maxValue" class="form-control" name="maxValue" placeholder="₹2000+" type="number" min="0" step="50">
+                    </div>
+                  </div> <!-- form-row.// -->
+                </div><!-- card-body.// -->
+              </div>
+            </article> <!-- filter-group .// -->
+
+            <article class="filter-group">
+              <header class="card-header">
+                <a href="#" data-toggle="collapse" data-target="#collapse_4" aria-expanded="true" class="">
+                  <i class="icon-control fa fa-chevron-down"></i>
+                  <h6 class="title">Sort By</h6>
+                </a>
+              </header>
+              <div class="filter-content collapse show" id="collapse_4" style="">
+                <div class="card-body">
+                  <div class="form-group">
+                    <label>Sort by:</label>
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="sort_by" value="low_to_high" id="sortLowToHigh">
+                      <label class="form-check-label" for="sortLowToHigh">Price Low to High</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="sort_by" value="high_to_low" id="sortHighToLow">
+                      <label class="form-check-label" for="sortHighToLow">Price High to Low</label>
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn-block btn-primary">Apply</button>
+                </div><!-- card-body.// -->
+              </div>
+            </article> <!-- filter-group .// -->
+          </form>
+        </div> <!-- card.// -->
+      </aside> <!-- col.// -->
+
+      <main class="col-md-9">
+        <header class="border-bottom mb-4 pb-3">
+          <div class="form-inline">
+            <span class="mr-md-auto">{{ var_count }} Items found</span>
+          </div>
+        </header><!-- sect-heading -->
+
+        <div class="row">
+          {% for variant in variants %}
+          {% if not variants %}
+          <h4>currently unavailable</h4>
+          {% else %}
+          <div class="col-md-6 col-lg-4 col-sm-6 col-6 ftco-animate">
+            <div class="product">
+              <a href="{% url 'shop_by_product' variant.product_id variant.id %}" class="img-prod">
+                <div style="display: flex; justify-content: center; align-items: center; height: 250px;">
+                  {% for image in variant.images.all %}
+                  <img class="img-fluid" src="{{ image.image1.url }}" alt="img" style="max-width: 90%; max-height: 80%;">
+                  {% endfor %}
+                </div>
+                <div class="overlay"></div>
+              </a>
+              <div class="text py-3 pb-4 px-3 text-center">
+                <h3><a href="#">{{ variant.variant_name }}({{ variant.product }}){{ variant.id }}{{ variant.product_id }}</a></h3>
+                <div class="d-flex">
+                  <div class="pricing">
+                    <p class="price">
+                      <span class="mr-2 price-dc">{{ variant.mrp }}</span>
+                      <span class="price-sale">{{ variant.offer_price }}</span>
+                    </p>
+                  </div>
+                </div>
+                <div class="bottom-area d-flex px-3">
+                  <div class="m-auto d-flex">
+                    <a href="#" class="add-to-cart d-flex justify-content-center align-items-center text-center">
+                      <span><i class="ion-ios-menu"></i></span>
+                    </a>
+                    <a href="#" class="buy-now d-flex justify-content-center align-items-center mx-1">
+                      <span><i class="ion-ios-cart"></i></span>
+                    </a>
+                    <a href="#" class="heart d-flex justify-content-center align-items-center ">
+                      <span><i class="ion-ios-heart"></i></span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div>
+
+        <div class="row mt-5 pagination">
+          <div class="col text-center">
+            <div class="block-27">
+              {% if variants.has_other_pages %}
+              <ul>
+                {% if variants.has_previous %}
+                <li class="page-item active"><a href="?page={{ variants.previous_page_number }}">&lt;</a></li>
+                {% else %}
+                <li class="page-item disabled"><a href="">&lt;</a></li>
+                {% endif %}
+                {% for i in variants.paginator.page_range %}
+                  {% if variants.number == i %}
+                  <li class="page-item deactivate"><a class="page-link" href="#">{{ i }}</a></li>
+                  {% else %}
+                  <li class="page-item"><a href="?page={{ i }}">{{ i }}</a></li>
+                  {% endif %}
+                {% endfor %}
+                {% if variants.has_next %}
+                <li class="page-item active"><a href="?page={{ variants.next_page_number }}">&gt;</a></li>
+                {% else %}
+                <li class="page-item di"><a href="#">&gt;</a></li>
+                {% endif %}
+              </ul>
+              {% endif %}
+            </div>
+          </div> 
+        </div>
+      </main>
+    </div>
+  </div>
+</section>
+
+<!-- JavaScript function to handle checkbox interactions -->
+<script>
+function toggleAllCategories() {
+  const allCategoryCheckbox = document.querySelector('input[name="all_category"]');
+  const categoryCheckboxes = document.querySelectorAll('input[name^="category_name_"]');
+
+  if (allCategoryCheckbox.checked) {
+    // If "All Category" is checked, deselect all individual categories
+    categoryCheckboxes.forEach(checkbox => (checkbox.checked = false));
+  }
+}
+
+function handleCategoryCheckbox() {
+  const allCategoryCheckbox = document.querySelector('input[name="all_category"]');
+  const categoryCheckboxes = document.querySelectorAll('input[name^="category_name_"]');
+
+  // Check if any individual category is checked
+  const anyCategoryChecked = Array.from(categoryCheckboxes).some(checkbox => checkbox.checked);
+
+  if (anyCategoryChecked) {
+    // If any individual category is checked, uncheck "All Category"
+    allCategoryCheckbox.checked = false;
+  }
+}
+</script>
+
+<!-- AJAX script to handle form submission -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+    // Handle form submission via AJAX
+    $('#filter-form').submit(function(e) {
+      e.preventDefault(); // Prevent default form submission
+
+      var form = $(this);
+      var url = form.attr('action');
+      var formData = form.serialize(); // Serialize form data
+
+      // Additional step: Get the values of min and max price
+      var minValue = $('#minValue').val();
+      var maxValue = $('#maxValue').val();
+
+      // Add min and max price to the form data
+      formData += '&minValue=' + minValue + '&maxValue=' + maxValue;
+
+      // Send AJAX request to the server with form data
+      $.ajax({
+        type: 'POST',
+        url: '/user-shop/',
+        data: formData,
+        success: function(response) {
+          // Update the product list container with the new content
+          $('#product-list-container').html(response);
+        },
+        error: function(xhr, status, error) {
+          // Handle error if necessary
+          console.log(error);
+        }
+      });
+    });
+  });
+</script>
+
+
+

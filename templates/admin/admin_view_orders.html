@@ -1,0 +1,124 @@
+{% extends 'admin/admin_layout/admin_main.html' %}
+{% load static %}
+
+{% block title %}Users Order-details{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="card h-100 mt-4">
+            <div class="card-body">
+                <div class="container">
+                    <div class="row gutters">
+                        <div class="col-md-12 text-center">
+                            <h3 class="m-4">Order Details</h3>
+                        </div>
+                    </div>
+                
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                            <h5 class="modal-subtitle">Order Information</h5>
+                            <p><strong>Order ID:</strong> {{order.id}}</p>
+                            <p><strong>Order Number:</strong> <span id="order-number"> {{order.order_number}}</span></p>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                            <h5 class="modal-subtitle">User Information</h5>
+                            <p><strong>First Name:</strong> <span id="user-first-name"> {{order.first_name}}</span></p>
+                            <p><strong>Last Name:</strong> <span id="user-last-name"> {{order.last_name}}</span></p>
+                            <p><strong>Phone:</strong> <span id="user-phone"></span> {{order.phone}}</p>
+                            <p><strong>Email:</strong> <span id="user-email"></span> {{order.email}}</p>
+
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                            <h5 class="modal-subtitle">Payment Information</h5>
+                            <p><strong>Payment Mode:</strong> <span id="payment-mode"> {{order.payment_mode}}</span></p>
+                            <p><strong>Order Total Amount:</strong> <span id="order-total-amount"> {{order.order_total_amount}}</span></p>
+                            <p><strong>Order Status:</strong> <span id="order-status"> {{order.order_status}}</span></p>
+                            <p><strong>Order Created Date:</strong> <span id="order-created-date"> {{order.order_created_date}}</span></p>
+                            <p><strong>Updated At:</strong> <span id="updated-at"> {{order.updated_at}}</span></p>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                            <h5 class="modal-subtitle">Shipping Information</h5>
+                            <p><strong>Address Line 1:</strong> <span id="address-line1"> {{order.address_line1}}</span></p>
+                            <p><strong>Address Line 2:</strong> <span id="address-line2"> {{order.address_line2}}</span></p>
+                            <p><strong>Country:</strong> <span id="country"> {{order.country}}</span></p>
+                            <p><strong>State:</strong> <span id="state"> {{order.state}}</span></p>
+                            <p><strong>City:</strong> <span id="city"> {{order.city}}</span></p>
+                            <p><strong>Postcode:</strong> <span id="postcode"> {{order.postcode}}</span></p>
+                        </div>
+                    </div>
+
+                    
+
+                    <div class="row mt-4">
+                        <div class="col-md-12 col-xl-12 col-lg-12">
+                            <h5 class="modal-subtitle">Order Products</h5>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <th>Product ID</th>
+                                        <th>Product Name</th>
+                                        <th>Variant Name</th>
+                                        <th>Quantity</th>
+                                        <th>Amount</th>
+                                        <th>Created At</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                    <tbody>
+                                        {% for items in order_items %}
+                                           <tr>
+                                            <td>{{items.id}}</td>
+                                            <td>{{items.product.product_name}}</td>
+                                            <td>{{items.varaiant.variant_name}}</td>
+                                            <td>{{items.quantity}}</td>
+                                            <td>{{items.amount}}</td>
+                                            <td>{{items.created_at}}</td>
+                                            <td>
+                                            
+                                            {% if items.product_status == 'Pending' %}
+                                            <a href="{% url 'update_order_status' items.id 'Pending' %}" class="btn btn-success" type="button">Accept</a>
+                                            <a href="{% url 'update_order_status' items.id 'Cancelled' %}" class="btn btn-danger" type="button">Cancel</a>
+                                          
+                                            {% elif items.product_status == 'Confirmed' %}
+                                            <a href="{% url 'update_order_status' items.id 'Confirmed' %}" class="btn btn-success" type="button">Confirmed</a>
+                                            {% elif items.product_status == 'Out for Shipping' %}
+                                            <a href="{% url 'update_order_status' items.id 'Out for Shipping' %}" class="btn btn-success" type="button">On shipping</a>
+                                            {% elif items.product_status == 'Out for Delivery' %}
+                                            <a href="{% url 'update_order_status' items.id 'Out for Delivery' %}" class="btn btn-success" type="button">Out for delivery</a>
+
+                                            {% elif items.product_status == 'Delivered' %}
+                                            <a href="" class="btn btn-success" type="button">Delivered</a>
+                                            {% elif items.product_status == 'Cancelled' %}
+                                            <h6 class="text-danger">Cancelled</h6>
+                                            {% elif items.product_status == 'Returned' %}
+                                            <h6 class="text-danger">Returned</h6>
+
+
+                            
+
+                                            {% endif %}
+                                            </td>
+                                           </tr>
+                                           {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+          
+
+
+{% endblock %}

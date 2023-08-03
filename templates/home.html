@@ -1,0 +1,1388 @@
+{% extends 'layouts/main.html' %}
+{% load static %}
+
+{% block style %}
+<style>
+    
+
+    @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700,800,900');
+
+body{
+	font-family: 'Poppins', sans-serif;
+	font-weight: 300;
+	font-size: 15px;
+	line-height: 1.7;
+	color: #c4c3ca;
+	background-color: #86899e;
+	overflow-x: hidden;
+}
+a {
+	cursor: pointer;
+  transition: all 200ms linear;
+}
+a:hover {
+	text-decoration: none;
+}
+.link {
+  color: #c4c3ca;
+}
+.link:hover {
+  color: #ffeba7;
+}
+p {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.7;
+}
+h4 {
+  font-weight: 600;
+}
+h6 span{
+  padding: 0 20px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.section{
+  position: relative;
+  width: 100%;
+  display: block;
+}
+.full-height{
+  min-height: 100vh;
+}
+[type="checkbox"]:checked,
+[type="checkbox"]:not(:checked){
+  position: absolute;
+  left: -9999px;
+}
+.checkbox:checked + label,
+.checkbox:not(:checked) + label{
+  position: relative;
+  display: block;
+  text-align: center;
+  width: 60px;
+  height: 16px;
+  border-radius: 8px;
+  padding: 0;
+  margin: 10px auto;
+  cursor: pointer;
+  background-color: #ffeba7;
+}
+.checkbox:checked + label:before,
+.checkbox:not(:checked) + label:before{
+  position: absolute;
+  display: block;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: #ffeba7;
+  background-color: #102770;
+  font-family: 'unicons';
+  content: '\eb4f';
+  z-index: 20;
+  top: -10px;
+  left: -10px;
+  line-height: 36px;
+  text-align: center;
+  font-size: 24px;
+  transition: all 0.5s ease;
+}
+.checkbox:checked + label:before {
+  transform: translateX(44px) rotate(-270deg);
+}
+
+
+.card-3d-wrap {
+  position: relative;
+  width: 440px;
+  max-width: 100%;
+  height: 400px;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  perspective: 800px;
+  margin-top: 60px;
+}
+.card-3d-wrapper {
+  width: 100%;
+  height: 100%;
+  position:absolute;    
+  top: 0;
+  left: 0;  
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  transition: all 600ms ease-out; 
+}
+.card-front, .card-back {
+  width: 100%;
+  height: 100%;
+  background-color: #2a2b38;
+  background-image: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/1462889/pat.svg');
+  background-position: bottom center;
+  background-repeat: no-repeat;
+  background-size: 300%;
+  position: absolute;
+  border-radius: 6px;
+  left: 0;
+  top: 0;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  -o-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+.card-back {
+  transform: rotateY(180deg);
+}
+.checkbox:checked ~ .card-3d-wrap .card-3d-wrapper {
+  transform: rotateY(180deg);
+}
+.center-wrap{
+  position: absolute;
+  width: 100%;
+  padding: 0 35px;
+  top: 50%;
+  left: 0;
+  transform: translate3d(0, -50%, 35px) perspective(100px);
+  z-index: 20;
+  display: block;
+}
+
+
+.form-group{ 
+  position: relative;
+  display: block;
+    margin: 0;
+    padding: 0;
+}
+.form-style {
+  padding: 13px 20px;
+  padding-left: 55px;
+  height: 48px;
+  width: 100%;
+  font-weight: 500;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: 0.5px;
+  outline: none;
+  color: #c4c3ca;
+  background-color: #86899e;
+  border: none;
+  -webkit-transition: all 200ms linear;
+  transition: all 200ms linear;
+  box-shadow: 0 4px 8px 0 rgba(21,21,21,.2);
+}
+.form-style:focus,
+.form-style:active {
+  border: none;
+  outline: none;
+  box-shadow: 0 4px 8px 0 rgba(21,21,21,.2);
+}
+.input-icon {
+  position: absolute;
+  top: 0;
+  left: 18px;
+  height: 48px;
+  font-size: 24px;
+  line-height: 48px;
+  text-align: left;
+  color: #ffeba7;
+  -webkit-transition: all 200ms linear;
+    transition: all 200ms linear;
+}
+
+.form-group input:-ms-input-placeholder  {
+  color: #c4c3ca;
+  opacity: 0.7;
+  -webkit-transition: all 200ms linear;
+    transition: all 200ms linear;
+}
+.form-group input::-moz-placeholder  {
+  color: #c4c3ca;
+  opacity: 0.7;
+  -webkit-transition: all 200ms linear;
+    transition: all 200ms linear;
+}
+.form-group input:-moz-placeholder  {
+  color: #c4c3ca;
+  opacity: 0.7;
+  -webkit-transition: all 200ms linear;
+    transition: all 200ms linear;
+}
+.form-group input::-webkit-input-placeholder  {
+  color: #c4c3ca;
+  opacity: 0.7;
+  -webkit-transition: all 200ms linear;
+    transition: all 200ms linear;
+}
+.form-group input:focus:-ms-input-placeholder  {
+  opacity: 0;
+  -webkit-transition: all 200ms linear;
+    transition: all 200ms linear;
+}
+.form-group input:focus::-moz-placeholder  {
+  opacity: 0;
+  -webkit-transition: all 200ms linear;
+    transition: all 200ms linear;
+}
+.form-group input:focus:-moz-placeholder  {
+  opacity: 0;
+  -webkit-transition: all 200ms linear;
+    transition: all 200ms linear;
+}
+.form-group input:focus::-webkit-input-placeholder  {
+  opacity: 0;
+  -webkit-transition: all 200ms linear;
+    transition: all 200ms linear;
+}
+
+.btn{  
+  border-radius: 4px;
+  height: 44px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  -webkit-transition : all 200ms linear;
+  transition: all 200ms linear;
+  padding: 0 30px;
+  letter-spacing: 1px;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -moz-align-items: center;
+  -ms-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  -moz-justify-content: center;
+  -ms-justify-content: center;
+  justify-content: center;
+  -ms-flex-pack: center;
+  text-align: center;
+  border: none;
+  background-color: #ffeba7;
+  color: #102770;
+  box-shadow: 0 8px 24px 0 rgba(255,235,167,.2);
+}
+.btn:active,
+.btn:focus{  
+  background-color: #102770;
+  color: #ffeba7;
+  box-shadow: 0 8px 24px 0 rgba(16,39,112,.2);
+}
+.btn:hover{  
+  background-color: #102770;
+  color: #ffeba7;
+  box-shadow: 0 8px 24px 0 rgba(16,39,112,.2);
+}
+
+
+
+
+.logo {
+	position: absolute;
+	top: 30px;
+	right: 30px;
+	display: block;
+	z-index: 100;
+	transition: all 250ms linear;
+}
+.logo img {
+	height: 26px;
+	width: auto;
+	display: block;
+}
+
+
+
+
+
+    .alert-container {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 9999;
+    }
+
+    .alert-box {
+        position: relative;
+        padding: 10px 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        animation: fadeOut 4s ease forwards;
+        opacity: 1;
+    }
+
+    @keyframes fadeOut {
+        0% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        90% {
+            opacity: 1;
+            transform: translateY(-30px);
+        }
+        100% {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+    }
+</style>
+{% endblock style %}
+
+{% block body %}
+<a href="https://front.codes/" class="logo" target="_blank">
+    <img src="{% static 'path_to_your_logo_image.png' %}" alt="">
+</a>
+<div class="section">
+  <div class="container">
+      <div class="row full-height justify-content-center">
+          <div class="col-12 text-center align-self-center py-5">
+              <div class="section pb-5 pt-5 pt-sm-2 text-center">
+                  <h2 class="mb-0 pb-3 text-light"><span>Log In </span></h2>
+                  <label for="reg-log"></label>
+                  <div class="card-3d-wrap mx-auto">
+                      <div class="card-3d-wrapper">
+                          <div class="card-front">
+                              <div class="center-wrap">
+                                  <div class="section text-center">
+                                      <h4 class="mb-4 pb-3">Sign In</h4>
+                                      <form method="POST" action="#">
+                                          {% csrf_token %}
+                                          {% if messages %}
+                                              <ul class="messages">
+                                                  {% for message in messages %}
+                                                      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                                                  {% endfor %}
+                                              </ul>
+                                          {% endif %}
+                                          <div class="form-group">
+                                              <input type="email" name="email" class="form-style" placeholder="Email" id="regemail" autocomplete="off">
+                                              <i class="input-icon uil uil-envelope"></i>
+                                          </div>
+                                          <div class="form-group">
+                                              <input type="password" name="user_password" class="form-style" placeholder="Password" id="logpass" autocomplete="off">
+                                              <i class="input-icon uil uil-lock-alt"></i>
+                                          </div>
+                                          <button type="submit" class="btn mt-4">Submit</button>
+                                      </form>
+                                      <p class="mb-0 mt-4 text-center"><a href="#0" class="link">Forgot your password?</a></p>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+
+
+<script>
+setTimeout(function() {
+    var alertBox = document.querySelector('.alert-container');
+    if (alertBox) {
+        alertBox.remove();
+    }
+}, 3000);
+</script>
+
+{% endblock body %} 
+
+
+
+
+
+{% extends 'layouts/main.html' %}
+{% load static %}
+
+{% block style %}
+<style>
+    
+
+    @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700,800,900');
+
+body{
+	font-family: 'Poppins', sans-serif;
+	font-weight: 300;
+	font-size: 15px;
+	line-height: 1.7;
+	color: #c4c3ca;
+	background-color:#c9cad1 ;
+	overflow-x: hidden;+
+}
+a {
+	cursor: pointer;
+  transition: all 200ms linear;
+}
+a:hover {
+	text-decoration: none;
+}
+.link {
+  color: #c4c3ca;
+}
+.link:hover {
+  color: #ffeba7;
+}
+p {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.7;
+}
+h4 {
+  font-weight: 600;
+}
+h6 span{
+  padding: 0 20px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.section{
+  position: relative;
+  width: 100%;
+  display: block;
+}
+.full-height{
+  min-height: 100vh;
+}
+[type="checkbox"]:checked,
+[type="checkbox"]:not(:checked){
+  position: absolute;
+  left: -9999px;
+}
+.checkbox:checked + label,
+.checkbox:not(:checked) + label{
+  position: relative;
+  display: block;
+  text-align: center;
+  width: 60px;
+  height: 16px;
+  border-radius: 8px;
+  padding: 0;
+  margin: 10px auto;
+  cursor: pointer;
+  background-color: #ffeba7;
+}
+.checkbox:checked + label:before,
+.checkbox:not(:checked) + label:before{
+  position: absolute;
+  display: block;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: #ffeba7;
+  background-color: #102770;
+  font-family: 'unicons';
+  content: '\eb4f';
+  z-index: 20;
+  top: -10px;
+  left: -10px;
+  line-height: 36px;
+  text-align: center;
+  font-size: 24px;
+  transition: all 0.5s ease;
+}
+.checkbox:checked + label:before {
+  transform: translateX(44px) rotate(-270deg);
+}
+
+
+.card-3d-wrap {
+  position: relative;
+  width: 440px;
+  max-width: 100%;
+  height: 400px;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  perspective: 800px;
+  margin-top: 60px;
+}
+.card-3d-wrapper {
+  width: 100%;
+  height: 100%;
+  position:absolute;     
+  top: 0;
+  left: 0;  
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  transition: all 600ms ease-out; 
+}
+.card-front, .card-back {
+  width: 100%;
+  height: 100%;
+  background-color: #2a2b38;
+  background-image: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/1462889/pat.svg');
+  background-position: bottom center;
+  background-repeat: no-repeat;
+  background-size: 300%;
+  position: absolute;
+  border-radius: 6px;
+  left: 0;
+  top: 0;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  -o-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+.card-back {
+  transform: rotateY(180deg);
+}
+.checkbox:checked ~ .card-3d-wrap .card-3d-wrapper {
+  transform: rotateY(180deg);
+}
+.center-wrap{
+  position: absolute;
+  width: 100%;
+  padding: 0 35px;
+  top: 50%;
+  left: 0;
+  transform: translate3d(0, -50%, 35px) perspective(100px);
+  z-index: 20;
+  display: block;
+}
+
+
+.form-group{ 
+  position: relative;
+  display: block;
+    margin: 0;
+    padding: 0;
+}
+.form-style {
+  padding: 13px 20px;
+  padding-left: 55px;
+  height: 48px;
+  width: 100%;
+  font-weight: 500;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: 0.5px;
+  outline: none;
+  color: #c4c3ca;
+  background-color: #86899e;
+  border: none;
+  -webkit-transition: all 200ms linear;
+  transition: all 200ms linear;
+  box-shadow: 0 4px 8px 0 rgba(21,21,21,.2);
+}
+.form-style:focus,
+.form-style:active {
+  border: none;
+  outline: none;
+  box-shadow: 0 4px 8px 0 rgba(21,21,21,.2);
+}
+.input-icon {
+  position: absolute;
+  top: 0;
+  left: 18px;
+  height: 48px;
+  font-size: 24px;
+  line-height: 48px;
+  text-align: left;
+  color: #ffeba7;
+  -webkit-transition: all 200ms linear;
+    transition: all 200ms linear;
+}
+
+.form-group input:-ms-input-placeholder  {
+  color: #c4c3ca;
+  opacity: 0.7;
+  -webkit-transition: all 200ms linear;
+    transition: all 200ms linear;
+}
+.form-group input::-moz-placeholder  {
+  color: #c4c3ca;
+  opacity: 0.7;
+  -webkit-transition: all 200ms linear;
+    transition: all 200ms linear;
+}
+.form-group input:-moz-placeholder  {
+  color: #c4c3ca;
+  opacity: 0.7;
+  -webkit-transition: all 200ms linear;
+    transition: all 200ms linear;
+}
+.form-group input::-webkit-input-placeholder  {
+  color: #c4c3ca;
+  opacity: 0.7;
+  -webkit-transition: all 200ms linear;
+    transition: all 200ms linear;
+}
+.form-group input:focus:-ms-input-placeholder  {
+  opacity: 0;
+  -webkit-transition: all 200ms linear;
+    transition: all 200ms linear;
+}
+.form-group input:focus::-moz-placeholder  {
+  opacity: 0;
+  -webkit-transition: all 200ms linear;
+    transition: all 200ms linear;
+}
+.form-group input:focus:-moz-placeholder  {
+  opacity: 0;
+  -webkit-transition: all 200ms linear;
+    transition: all 200ms linear;
+}
+.form-group input:focus::-webkit-input-placeholder  {
+  opacity: 0;
+  -webkit-transition: all 200ms linear;
+    transition: all 200ms linear;
+}
+
+.btn{  
+  border-radius: 4px;
+  height: 44px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  -webkit-transition : all 200ms linear;
+  transition: all 200ms linear;
+  padding: 0 30px;
+  letter-spacing: 1px;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -moz-align-items: center;
+  -ms-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  -moz-justify-content: center;
+  -ms-justify-content: center;
+  justify-content: center;
+  -ms-flex-pack: center;
+  text-align: center;
+  border: none;
+  background-color: #ffeba7;
+  color: #102770;
+  box-shadow: 0 8px 24px 0 rgba(255,235,167,.2);
+}
+.btn:active,
+.btn:focus{  
+  background-color: #102770;
+  color: #ffeba7;
+  box-shadow: 0 8px 24px 0 rgba(16,39,112,.2);
+}
+.btn:hover{  
+  background-color: #102770;
+  color: #ffeba7;
+  box-shadow: 0 8px 24px 0 rgba(16,39,112,.2);
+}
+
+
+
+
+.logo {
+	position: absolute;
+	top: 30px;
+	right: 30px;
+	display: block;
+	z-index: 100;
+	transition: all 250ms linear;
+}
+.logo img {
+	height: 26px;
+	width: auto;
+	display: block;
+}
+
+
+
+
+
+.alert-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+}
+
+.alert-box {
+    position: relative;
+    padding: 10px 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    animation: fadeOut 4s ease forwards;
+    opacity: 1;
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    90% {
+        opacity: 1;
+        transform: translateY(-30px);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+}
+</style>
+{% endblock style %}
+
+{% block body %}
+<a href="https://front.codes/" class="logo" target="_blank">
+    <img src="{% static 'path_to_your_logo_image.png' %}" alt="">
+</a>
+                            <div class="card-back">
+                                <div class="center-wrap">
+                                    <div class="section text-center">
+                                        <h4 class="mb-4 pb-3 mt-3">Sign Up</h4>
+                                        <form method="POST" action="#">
+                                            {% csrf_token %}
+                                            <div class="form-group">
+                                                <input type="text" name="newname" class="form-style" placeholder="Username" id="regname" autocomplete="off">
+                                                
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="email" name="new_email" class="form-style" placeholder="Email" id="email" autocomplete="off">
+                                                <div id="email_error" class="error-message"></div>
+
+                                            </div>
+                                            <div class="form-group">
+                                              <input type="text" name="new_number" class="form-style" placeholder="Number" id="phone" autocomplete="off">
+                                              <div id="phone_error" class="error-message"></div>
+
+                                          </div>
+            
+                                            <div class="form-group">
+                                                <input type="password" name="new_password_1" class="form-style" placeholder="Password" id="password" autocomplete="off">
+                                                <div id="password_error" class="error-message"></div>
+
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="password" name="new_password_2" class="form-style" placeholder="Confirm Password" id="confirm_password" autocomplete="off">
+                                                <div id="cpassword_error" class="error-message"></div>
+
+                                            </div>
+                                            <button type="submit" class="btn mt-4 mb-3">Submit</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}
+
+
+{% extends 'layouts/main.html' %}
+{% load static %}
+
+
+{% block body %}
+
+
+<section class="ftco-section"  style="background-color:#bbf2b5;">
+    <h1 class="text-center">checkout page</h1>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-xl-7 ftco-animate">
+
+
+        <form action="{% url 'place_order'%}" class="billing-form" method="POST">{%csrf_token%}
+          <h3 class="mb-4 billing-heading">Billing Details</h3>
+          <div class="row align-items-end">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="firstname">Firt Name</label>
+                <input type="text"  name="first_name" class="form-control" placeholder="" />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="lastname">Last Name</label>
+                <input type="text" name="last_name" class="form-control" placeholder="" />
+              </div>
+            </div>
+            
+            <div class="w-100"></div>
+            <div class="col-md-6">
+                <div class="form-group">
+                  <label for="lastname">Phone</label>
+                  <input type="text" name="phone" class="form-control" placeholder="" />
+                </div>
+            </div>
+            
+            <div class="w-100"></div>
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="streetaddress">Address-line1</label>
+                <input
+                  type="text"
+                  class="form-control" name="address_line1"
+                  placeholder="House number and street name"
+                />
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="streetaddress">Address-line2</label>
+                <input
+                  type="text"
+                  class="form-control" name="address_line2"
+                  placeholder="Appartment, suite, unit etc: (optional)"
+                />
+              </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                  <label for="lastname">Country</label>
+                  <input type="text" name="country" class="form-control" placeholder="" />
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                  <label for="lastname">State</label>
+                  <input type="text" name="state" class="form-control" placeholder="" />
+                </div>
+            </div>
+            <div class="w-100"></div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="towncity">Town / City</label>
+                <input type="text" name="city" class="form-control" placeholder="" />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="postcodezip">Postcode / ZIP *</label>
+                <input type="text" name="postcode" class="form-control" placeholder="" />
+              </div>
+            </div>
+            <div class="w-100"></div>
+            <div class="col-md-6">
+                <div class="form-group">
+                  <label for="lastname">Email</label>
+                  <input type="email" name="email" class="form-control" placeholder="" />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="lastname">Phone</label>
+                  <input type="text" name="phone" class="form-control" placeholder="" />
+                </div>
+              </div>
+
+              
+            <div class="col-md-12">
+                <div class="form-group">
+                  <label for="emailaddress">Add-Note</label>
+                  <input type="email" name="order_note" class="form-control" placeholder="" >
+                </div>
+              </div>
+
+            {% comment %} <div class="w-100"></div>
+            <div class="col-md-12">
+              <div class="form-group mt-4">
+                <div class="radio">
+                  <label class="mr-3"
+                    ><input type="radio" name="optradio" /> Create an Account?
+                  </label>
+                  <label
+                    ><input type="radio" name="optradio" /> Ship to different
+                    address</label
+                  >
+                </div>
+              </div>
+            </div> {% endcomment %}
+          </div>
+        
+        <!-- END -->
+      </div>
+      <div class="col-xl-5">
+        <div class="row mt-5 pt-3">
+          <div class="col-md-12 d-flex mb-5">
+            <div class="cart-detail cart-total p-3 p-md-4">
+              <h3 class="billing-heading mb-4">Cart Total</h3>
+              <p class="d-flex">
+                <span>Subtotal</span>
+                <span>₹ {{total_offer_price}}</span>
+              </p>
+              <p class="d-flex">
+                <span>Delivery</span>
+                <span>₹ {{delivery}}</span>
+              </p>
+       
+              <hr />
+              <p class="d-flex total-price">
+                <span>Total</span>
+                <span>₹ {{grand_total}}</span>
+              </p>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="cart-detail p-3 p-md-4">
+              {% comment %} <h3 class="billing-heading mb-4">Payment Method</h3>
+              <div class="form-group">
+                <div class="col-md-12">
+                  <div class="radio">
+                    <label
+                      ><input type="radio" name="optradio" class="mr-2" />
+                      Direct Bank Tranfer</label
+                    >
+                  </div>
+                </div>
+              </div> {% endcomment %}
+              {% comment %} <div class="form-group">
+                <div class="col-md-12">
+                  <div class="radio">
+                    <label
+                      ><input type="radio" name="optradio" class="mr-2" /> Check
+                      Payment</label
+                    >
+                  </div>
+                </div>
+              </div> {% endcomment %}
+              {% comment %} <div class="form-group">
+                <div class="col-md-12">
+                  <div class="radio">
+                    <label
+                      ><input type="radio" name="optradio" class="mr-2" />
+                      Paypal</label
+                    >
+                  </div>
+                </div>
+              </div> {% endcomment %}
+              {% comment %} <div class="form-group">
+                <div class="col-md-12">
+                  <div class="checkbox">
+                    <label
+                      ><input type="checkbox" value="" class="mr-2" /> I have
+                      read and accept the terms and conditions</label
+                    >
+                  </div>
+                </div>
+              </div>
+               {% endcomment %}
+                <button type="submit" class="btn btn-primary py-3 px-4">Place an order</button>
+
+                <a href="{% url 'shop' %}" class="btn btn-primary">Continue shopping</a>
+
+              
+            </div>
+          </div>
+        </div>
+    </form>
+      </div>
+      <!-- .col-md-8 -->
+    </div>
+  </div>
+</section>
+<!-- .section -->
+
+{% endblock body %}
+
+
+
+
+
+# def apply_coupon(request):
+#     if request.method == 'POST':
+#         coupon_code = request.POST.get('coupon-code')
+#         user = request.user
+#         try:
+#             coupon = Coupon.objects.get(code=coupon_code)
+#         except Coupon.DoesNotExist:
+#             messages.warning(request, "COUPON CODE DOES NOT EXIST")
+#             return redirect('cart')
+        
+#         if not coupon.is_valid():
+#             messages.warning(request, "COUPON CODE IS NOT VALID")
+#             return redirect('cart')
+
+#         if UserCoupon.objects.filter(user=user, coupon_applied=coupon).exists():
+#             messages.warning(request, "YOU HAVE ALREADY USED THIS COUPON")
+#             return redirect('cart')
+
+#         cart, _ = Cart.objects.get_or_create(user=user)  
+#         if cart.get_total() < coupon.min_amount:
+#             messages.warning(request, "MINIMUM CART AMOUNT NOT MET")
+#             return redirect('cart')
+        
+
+  
+#         applicable_type = coupon.applicable_type
+#         if applicable_type == 'Category All':
+#             # Apply coupon to all categories
+#             cart.coupon_applied = coupon
+#             cart.save()
+#             UserCoupon.objects.create(user=user, coupon_applied=coupon)
+#             messages.success(request, "COUPON APPLIED SUCCESSFULLY")
+#             return redirect('cart')
+        
+#         elif applicable_type == 'Category':
+#             category = coupon.category
+#             if CartItem.objects.filter(cart=cart, product__category=category).exists():
+#                     cart.coupon_applied = coupon
+#                     cart.save()
+#                     UserCoupon.objects.create(user=user, coupon_applied=coupon)
+#                     messages.success(request, "COUPON APPLIED SUCCESSFULLY")
+#                     return redirect('cart')
+#             else:
+#                     messages.warning(request, "COUPON IS NOT APPLICABLE TO SELECTED CATEGORY")
+#                     return redirect('cart')
+#         else:
+#             messages.warning(request, "INVALID APPLICABLE TYPE")
+#             return redirect('cart')
+#     return redirect('cart')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# @login_required(login_url='user_login')
+# def add_to_wishlist(request):
+#     if request.method == 'POST':
+#         product_id = request.POST['product_id']
+#         print(product_id)
+#         product = Product.objects.get(id=product_id)
+#         print(product)
+#         try:
+#             wishlist = Wishlist.objects.get(user=request.user)
+#             print(wishlist,"try ------------------------------------------")
+#         except Wishlist.DoesNotExist:
+#             wishlist = Wishlist.objects.create(user=request.user)
+#         wishlist.product.add(product)
+#         return redirect('wishlist')
+
+        
+        
+#     return redirect('wishlist')
+
+
+# @login_required(login_url='user_login')
+# def wishlist_view(request):
+#     try:
+#         wishlist = Wishlist.objects.get(user=request.user)
+#     except Wishlist.DoesNotExist:   
+#         wishlist = None
+
+#     context = {
+#         'wishlist': wishlist,
+#     }
+#     return render(request, 'layouts/wishlist.html', context)
+
+
+
+
+# def add_cart(request, product_id):
+#     current_user = request.user
+#     product = get_object_or_404(Product, id=product_id)
+
+#     if current_user.is_authenticated:
+#         try:
+#             cart = Cart.objects.get(user=current_user)
+#         except Cart.DoesNotExist:
+#             cart = Cart.objects.create(user=current_user)
+
+#         try:
+#             cart_item = CartItem.objects.get(product=product, user=current_user, cart=cart)
+#             if cart_item.quantity < product.product_quantity:
+#                 cart_item.quantity += 1
+#                 cart_item.save()
+#         except CartItem.DoesNotExist:
+#             if product.product_quantity >0:
+#                 cart_item = CartItem.objects.create(
+#                     product=product,
+#                     quantity=1,
+#                     cart=cart,
+#                     user=current_user,
+#                 )
+
+#         return redirect('cart')
+    
+#     else:
+#         cart_id = _cart_id(request)
+#         try:
+#             cart = Cart.objects.get(cart_id=cart_id)
+#         except Cart.DoesNotExist:
+#             cart = Cart.objects.create(cart_id=cart_id)
+        
+#         try:
+#             cart_item = CartItem.objects.get(product=product, cart=cart)
+#             if cart_item.quantity < product.product_quantity:
+#                 cart_item.quantity += 1
+#                 cart_item.save()
+#         except CartItem.DoesNotExist:
+#             if product.product_quantity >0:
+#                 cart_item = CartItem.objects.create(
+#                     product=product,
+#                     quantity=1,
+#                     cart=cart,
+#                 )
+        
+#         return redirect('cart')
+
+
+
+
+
+
+
+
+# from django.http import JsonResponse
+
+# def update_cart(request):
+#     if request.method == 'POST' :
+#         cart_item_id = request.POST.get('cart_item_id')
+#         quantity = int(request.POST.get('quantity'))
+
+#         # Retrieve the cart item
+#         cart_item = get_object_or_404(CartItem, id=cart_item_id)
+
+#         # Update the cart item quantity
+#         if quantity > 0:
+#             cart_item.cart_quantity = quantity
+#             cart_item.save()
+#         else:
+#             cart_item.delete()
+
+#         return JsonResponse({'success': True})
+
+#     return JsonResponse({'success': False})
+
+from django.http import JsonResponse
+
+# def update_cart(request):
+#     if request.method == 'POST' and request.is_ajax():
+#         cart_item_id = request.POST.get('cart_item_id')
+#         quantity = int(request.POST.get('quantity'))
+
+#         # Retrieve the cart item
+#         cart_item = get_object_or_404(CartItem, id=cart_item_id)
+
+#         # Update the cart item quantity
+#         if quantity > 0:
+#             cart_item.cart_quantity = quantity
+#             cart_item.save()
+#         else:
+#             cart_item.delete()
+
+#         return JsonResponse({'success': True})
+
+#     return JsonResponse({'success': False})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# def add_cart(request, product_id):
+#     # Retrieve the product and variant based on the provided IDs
+#     product = Product.objects.get(id=product_id)
+#     variant_id = request.POST.get('variant')  # Retrieve the selected variant ID from the form
+    
+#     # Retrieve or create the cart based on the session
+#     cart_id = _cart_id(request)
+#     cart, _ = Cart.objects.get_or_create(cart_id=cart_id)
+    
+#     try:
+#         # Check if the cart item with the same product and variant already exists
+#         cart_item = CartItem.objects.get(cart=cart, product=product, variant_id=variant_id)
+#         cart_item.cart_quantity += 1  # Increment the quantity
+#         cart_item.save()
+#     except CartItem.DoesNotExist:
+#         # Create a new cart item if it doesn't exist
+#         cart_item = CartItem.objects.create(cart=cart, product=product, variant_id=variant_id)
+    
+#     return redirect('cart')
+
+
+
+
+
+# def _cart_id(request):  # private fun for getting the cart id
+#     cart = request.session.session_key
+#     if not cart:
+#         cart = request.session.create()
+#     return cart
+
+# def add_cart(request, product_id):
+#     current_user = request.user
+#     product = get_object_or_404(Product, id=product_id)
+
+#     if current_user.is_authenticated:
+#         try:
+#             cart = Cart.objects.get(user=current_user)
+#         except Cart.DoesNotExist:
+#             cart = Cart.objects.create(user=current_user)
+
+#         try:
+#             cart_item = CartItem.objects.get(product=product, user=current_user, cart=cart)
+#             if cart_item.quantity < product.product_quantity:
+#                 cart_item.quantity += 1
+#                 cart_item.save()
+#         except CartItem.DoesNotExist:
+#             if product.product_quantity >0:
+#                 cart_item = CartItem.objects.create(
+#                     product=product,
+#                     quantity=1,
+#                     cart=cart,
+#                     user=current_user,
+#                 )
+
+#         return redirect('cart')
+    
+#     else:
+#         cart_id = _cart_id(request)
+#         try:
+#             cart = Cart.objects.get(cart_id=cart_id)
+#         except Cart.DoesNotExist:
+#             cart = Cart.objects.create(cart_id=cart_id)
+        
+#         try:
+#             cart_item = CartItem.objects.get(product=product, cart=cart)
+#             if cart_item.quantity < product.product_quantity:
+#                 cart_item.quantity += 1
+#                 cart_item.save()
+#         except CartItem.DoesNotExist:
+#             if product.product_quantity >0:
+#                 cart_item = CartItem.objects.create(
+#                     product=product,
+#                     quantity=1,
+#                     cart=cart,
+#                 )
+        
+#         return redirect('cart')
+
+
+# def remove_cart(request, product_id, cart_item_id):
+   
+#     product = get_object_or_404(Product,id=product_id)
+#     try:
+#         if request.user.is_authenticated:
+#            cart_item = CartItem.objects.get(product=product,user=request.user, id=cart_item_id)
+#         else:
+#              cart = Cart.objects.get(cart_id=_cart_id(request))
+#              cart_item = CartItem.objects.get(product=product,cart=cart, id=cart_item_id)
+
+#         if cart_item.quantity > 1:
+#             cart_item.quantity -=1
+#             cart_item.save()
+#         else:
+#             cart_item.delete()
+#     except:
+#         pass
+#     return redirect('cart')
+# def remove_cart_item(request, product_id, cart_item_id):
+#     product = get_object_or_404(Product, id=product_id)
+#     if request.user.is_authenticated:
+#        cart_item = CartItem.objects.get(product=product,user=request.user, id = cart_item_id)
+#     else:
+#         cart = Cart.objects.get(cart_id=_cart_id(request))
+#         cart_item = CartItem.objects.get(product=product,cart=cart, id=cart_item_id)
+#     cart_item.delete()
+#     return redirect('cart')
+     
+# def cart(request, total=0, quantity=0, cart_items=None):
+
+#     try:
+#         tax=0
+#         grand_total=0
+#         if request.user.is_authenticated:
+#              cart_items = CartItem.objects.filter(user=request.user, is_active=True)
+#         else:     
+#             cart = Cart.objects.get(cart_id=_cart_id(request))
+#             cart_items = CartItem.objects.filter(cart=cart, is_active=True)
+#         for cart_item in cart_items:
+#             total += (cart_item.product.product_price * cart_item.quantity)
+#             quantity += cart_item.quantity
+#         tax= (2*total)/100
+#         grand_total = total+ tax    
+       
+#     except ObjectDoesNotExist:
+#         pass
+    
+#     context = {
+#         'total'     : total,
+#         "quantity"  : quantity,
+#         'cart_item' : cart_items,
+#         'tax'       : tax,
+#         'grand_total': grand_total  
+        
+       
+      
+#     }
+    
+#     return render(request, 'layouts/cart.html',context)
+
+
+# def add_to_cart(request, id):
+#     product = get_object_or_404(Product, pk=id)
+#     if request.method == 'POST':
+#         user = request.user if request.user.is_authenticated else None
+#         cart, _ = Cart.objects.get_or_create(user=user)
+#         product_size_id = request.POST.get('product_size_id')  # Get the selected product size ID from the request
+
+#         if product_size_id is not None:
+#             try:
+#                 # Check if the cart already contains the selected product and product size
+#                 cart_item, created = cart.cart_items.get_or_create(product=product, product_size_id=product_size_id)
+
+#                 if not created:
+#                     cart_item.quantity += 1
+#                     if cart_item.quantity > cart_item.product_size.Quantity:
+#                         cart_item.quantity = cart_item.product_size.Quantity
+#                 cart_item.save()
+
+#             except IntegrityError:
+#                 messages.error(request, 'Please select a valid size.')
+                
+#         else:
+#             messages.error(request, 'Please select a size.')
+#             return redirect('item',id)
+
+#     return redirect('cart')

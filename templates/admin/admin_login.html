@@ -1,0 +1,42 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+<title> SignIn Form</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+
+<!-- //Custom Theme files -->
+<link href="{% static 'admin/css/reg.css' %}" rel="stylesheet" type="text/css" media="all" />
+<!-- web font -->
+<link href="//fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i" rel="stylesheet">
+<!-- //web font -->
+</head>
+<body>
+	<!-- main -->
+	<div class="main-w3layouts wrapper">
+		<h1>SignIn Form</h1>
+		<div class="main-agileinfo">
+			<div class="agileits-top">
+				<form action="#" method="post">
+          {% csrf_token%}
+					<input class="text" type="Email" name="email" placeholder="Email" required="true">
+                    <br>
+					<input class="text" type="password" name="password" placeholder="Password" required="">
+					<div class="wthree-text">
+						
+						<div class="clear"> </div>
+					</div>
+					<input type="submit" value="SIGN IN">
+				</form>
+				<p> Back To Welcome Page <a href="{% url 'welcome_page'%}"> Click here</a></p>
+			
+			</div>
+		</div>
+		
+	
+		
+</body>
+</html>

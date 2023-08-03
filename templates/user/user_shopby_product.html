@@ -1,0 +1,525 @@
+{% extends 'layouts/main.html' %}
+{% load static %}
+{% block title %}Product-details{% endblock %}
+{% block style %}
+<style>
+  .colorful-button {
+    background-color: #cfc3a3; 
+    color: #ffffff; 
+    border-radius: 50px;}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+{% endblock style %}
+
+{% block body %}
+
+
+
+
+
+
+
+<section class="ftco-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 mb-5 ftco-animate">
+        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+          <ol class="carousel-indicators">
+            <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+          </ol>
+          <div class="carousel-inner">
+            {% for variant_image in variant_images  %}
+            <div class="carousel-item active">
+              <a href="{{variant_image.image1.url}}" class="image-popup">
+              <img class="d-block w-100" src="{{ variant_image.image1.url }}" alt="First slide">
+              </a>
+            </div>
+            <div class="carousel-item">
+              <a href="{{variant_image.image2.url}}" class="image-popup">
+              <img class="d-block w-100" src="{{variant_image.image2.url}}" alt="Second slide">
+            </a>
+            </div>
+            <div class="carousel-item">
+              <a href="{{variant_image.image3.url}}" class="image-popup">
+              <img class="d-block w-100" src="{{variant_image.image3.url}}" alt="Third slide">
+            </a>
+            </div>
+            {% endfor %}
+          </div>
+          <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+          </a>
+          <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+          </a>
+        </div>
+      </div>
+      <div class="col-lg-6 product-details pl-md-5 ftco-animate">
+        <div id="product-info">
+			<h3 id="product-variant-name">{{ product.product_name}} {{variant.variant_name }} </h3>
+        </div>
+       
+        <p class="price"><span id="product-price"> ₹{{ variant.offer_price }}</span></p>
+        <p id="variant-description">  {{ variant.variant_description }} </p>
+       <div class="row mt-4">
+          <div class="col-md-6"> 
+            <div class="form-group d-flex">
+              <form  method="POST" action="{% url 'add_cart' product.id %}"> {% csrf_token %}
+              <div class="select-wrap">
+                <div class="icon"><span class="ion-ios-arrow-down"></span></div>
+                {% comment %} <select name="variant" id="variant-select" class="form-control">
+                  {% for variant in variants %}
+                    <option value="{{ variant.id }}">{{ variant.variant_name }}</option>
+                  {% endfor %}
+                </select> {% endcomment %}
+                <select name="variant" id="variant-select" class="form-control">
+                  <option value="">Select a Variant</option>
+                  {% for variant in variants %}
+                    <option value="{{ variant.id }}">{{ variant.variant_name }}</option>
+                  {% endfor %}
+                </select>
+                <p id="variant-error" style="color: red; display: none;">Please Confirm a variant.</p>
+              </div>
+            </div>
+          </div>
+         
+          <div class="col-md-12">
+            <p style="color: #000;">{{ product.product_description }}</p>
+          </div>
+            <p id="stock-availability" class="text-danger"></p>
+              {% if in_cart %}
+              <p ><a  href="{% url 'cart' %}" class="btn btn-black btn-sm py-2 px-3">View In Cart</a></p>
+              {% else %}
+          <div class="input-group col-md-6 d-flex mb-3">
+            <span class="input-group-btn mr-2">
+              <button type="button" class="quantity-left-minus btn" data-type="minus" data-field="">
+                <i class="ion-ios-remove"></i>
+              </button>
+            </span>
+            <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1" min="1" max="100">
+            <span class="input-group-btn ml-2">
+              <button type="button" class="quantity-right-plus btn" data-type="plus" data-field="">
+                <i class="ion-ios-add"></i>
+              </button>
+            </span>
+          </div>
+        </div>
+          
+          
+
+          
+{% comment %}          
+              <button id="add-to-cart-button" type="submit" class="btn btn-sm py-2 px-3 colorful-button" >
+                Add to Cart
+              </button> {% endcomment %}
+              <button id="add-to-cart-button" type="submit" class="btn btn-sm py-2 px-3 colorful-button" disabled>
+                Add to Cart
+              </button>
+              {% endif %}
+              <a href="#" class="heart d-flex justify-content-center align-items-center ">
+                <span><i class="ion-ios-heart"></i></span>
+              </a>
+             
+      </form>
+        <form action="{% url 'add_to_wishlist' %}" method="post">
+          {% csrf_token %}
+          <input type="hidden" name="variant_id" value="{{ variant.id }}">
+          <button type="submit" class="wishlist-button"> <a href="#" class="heart d-flex justify-content-center align-items-center ">
+            <span><i class="ion-ios-heart"></i></span>
+          </a></button>
+          
+
+       </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  $(document).ready(function() {
+    // Function to check if a variant is selected and enable/disable the button accordingly
+    function checkVariantSelection() {
+      var selectedVariant = $('#variant-select').val();
+      if (selectedVariant) {
+        $('#variant-error').hide();
+        $('#add-to-cart-button').prop('disabled', false);
+      } else {
+        $('#variant-error').show();
+        $('#add-to-cart-button').prop('disabled', true);
+      }
+    }
+
+    // Call the function on page load
+    checkVariantSelection();
+
+    // Call the function whenever the variant selection changes
+    $('#variant-select').change(function() {
+      checkVariantSelection();
+    });
+  });
+</script>
+
+
+<script>
+  $(document).ready(function() {
+    console.log("heloooooooooooooooooooooooooooooooooo")
+    $('#variant-select').change(function() {
+      var selectedVariantId = $(this).val();
+      console.log(selectedVariantId)
+
+      // Perform an AJAX request to fetch the details of the selected variant
+      // Replace the URL with the actual endpoint that returns the variant details
+      $.ajax({
+        url: '/get-variant-details',
+        type: 'GET',
+        data: { variantId: selectedVariantId },
+
+        success: function(response)
+         {
+          // Update the product details on the page
+          var productImage = response.product_image;
+          var productPrice = response.product_price;
+	     	  var variantName = response.variant_name;
+    		  var variantProduct = response.product_name;
+    		  var variantDescription = response.variant_description;
+    		  var variantStock = response.variant_stock;
+    		  var variantStatus = response.variant_status;
+       
+
+          // Update the image source and price text
+          $('#product-image').attr('src', productImage);
+          $('#product-price').text('₹'+ productPrice);
+		      $('#product-variant-name').html(variantProduct +' '+ variantName);
+		      $('#variant-description').text(variantDescription);
+		      $('#variant-stock').text(variantStock);
+		      $('#variant-status').text(variantStatus);
+
+           if (variantStock <= 0) {
+          $('#stock-availability').text('Out of Stock');
+          $('#add-to-cart-button').prop('disabled', true);
+        } else {
+          $('#stock-availability').text('In Stock');
+          $('#add-to-cart-button').prop('disabled', false);
+        }
+        if ( variantStock == 'Out of stock') {
+          $('#stock-availability').text('Out of Stock');
+          $('#add-to-cart-button').prop('disabled', true);
+        } else {
+          $('#stock-availability').text('In Stock');
+          $('#add-to-cart-button').prop('disabled', false);
+        }
+
+
+
+
+		  
+
+          // Update other details as needed
+
+          // ...
+        },
+        error: function(xhr, status, error) {
+          // Handle error response if needed
+        }
+      });
+    });
+  });
+</script> 
+
+  <script>
+		$(document).ready(function(){
+   	var quantitiy=0;
+		   $('.quantity-right-plus').click(function(e){
+		        
+		        // Stop acting like a button
+		        e.preventDefault();
+		        // Get the field name
+		        var quantity = parseInt($('#quantity').val());
+		        
+		        // If is not undefined
+            if (quantity < 1) {
+              quantity = 1;
+            }
+		            
+		            $('#quantity').val(quantity + 1);
+
+		          
+		            // Increment
+		        
+		    });
+
+		     $('.quantity-left-minus').click(function(e){
+		        // Stop acting like a button
+		        e.preventDefault();
+		        // Get the field name
+		        var quantity = parseInt($('#quantity').val());
+		        
+		        // If is not undefined
+		      
+		            // Increment
+		            if(quantity>1){
+		            $('#quantity').val(quantity - 1);
+		            }
+		    });
+		    
+		});
+	</script>
+{% comment %} <script>$(document).ready(function() {
+  $('#variant-select').change(function() {
+    var selectedVariantId = $(this).val();
+
+    $.ajax({
+      url: '{% url 'get-variant-details' %}',
+      type: 'GET',
+      data: { variantId: selectedVariantId },
+      success: function(response) {
+        $('#product-image').attr('src', response.product_image);
+        $('#product-price').text('₹' + response.product_price);
+        $('#product-variant-name').html(response.product_name + ' ' + response.variant_name);
+        $('#variant-description').text(response.variant_description);
+
+        if (response.variant_stock <= 0) {
+          $('#stock-availability').text('Out of Stock');
+          $('#add-to-cart-button').hide();
+          $('#view-in-cart-button').hide();
+        } else {
+          
+          if (response.in_cart) {
+            $('#add-to-cart-button').hide();
+            $('#view-in-cart-button').show();
+          } else {
+            $('#add-to-cart-button').show();
+            $('#view-in-cart-button').hide();
+          }
+        }
+      },
+      error: function(xhr, status, error) {
+        // Handle error response if needed
+      }
+    });
+  });
+
+  $('#add-to-cart-button').click(function() {
+    var form = $('#add-to-cart-form');
+    var formData = form.serialize();
+
+    $.ajax({
+      url: form.attr('action'),
+      type: form.attr('method'),
+      data: formData,
+      success: function(response) {
+        // Handle success response
+        console.log(response);
+        if (response.success) {
+          // Cart updated successfully, you can show a success message or perform any other desired action
+          window.location.href = '{% url 'cart' %}'; // Redirect to the cart page
+        } else {
+          // Cart update failed, you can show an error message or perform any other desired action
+          console.log(response.error);
+        }
+      },
+      error: function(xhr, status, error) {
+        // Handle error response if needed
+      }
+    });
+  });
+
+  // Rest of your existing code
+  // ...
+});
+</script>
+
+{% endcomment %}
+{% endblock  %} 
+
+
+
+
+
+
+
+
+<!-- Select variant dropdown -->
+<select name="variant" id="variant-select" class="form-control">
+  <option value="">Select a Variant</option>
+  {% for variant in variants %}
+    <option value="{{ variant.id }}">{{ variant.variant_name }}</option>
+  {% endfor %}
+</select>
+<p id="variant-error" style="color: red; display: none;">Please select a variant.</p>
+
+<!-- "Add to Cart" button -->
+<button id="add-to-cart-button" type="submit" class="btn btn-sm py-2 px-3 colorful-button" disabled>
+  Add to Cart
+</button>
+
+<!-- JavaScript to enable/disable "Add to Cart" button based on variant selection -->
+
+
+
+
+
+
+
+
+
+
+
+<title>Product Details</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<section class="ftco-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 mb-5 ftco-animate">
+        <a href="" class="image-popup">
+          <img src="{{ variant_image.url }}" id="product-image" class="img-fluid" alt="Colorlib Template">
+        </a>
+      </div>
+      <div class="col-lg-6 product-details pl-md-5 ftco-animate">
+        <div id="product-info">
+          <h3 id="product-variant-name">{{ product.product_name }} {{ variant.variant_name }}</h3>
+        </div>
+        <div class="rating d-flex">
+          <p class="text-left mr-4">
+            <a href="#" class="mr-2">5.0</a>
+            <a href="#"><span class="ion-ios-star-outline"></span></a>
+            <a href="#"><span class="ion-ios-star-outline"></span></a>
+            <a href="#"><span class="ion-ios-star-outline"></span></a>
+            <a href="#"><span class="ion-ios-star-outline"></span></a>
+            <a href="#"><span class="ion-ios-star-outline"></span></a>
+          </p>
+          <p class="text-left mr-4">
+            <a href="#" class="mr-2" style="color: #000;">100 <span style="color: #bbb;">Rating</span></a>
+          </p>
+          <p class="text-left">
+            <a href="#" class="mr-2" style="color: #000;">500 <span style="color: #bbb;">Sold</span></a>
+          </p>
+        </div>
+        <p class="price"><span id="product-price">{{ variant.mrp }}</span></p>
+        <p id="variant-description">{{ variant.variant_description }}</p>
+
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <div class="form-group d-flex">
+              <form method="POST" action="{% url 'add_cart' product.id %}">
+                {% csrf_token %}
+                <div class="select-wrap">
+                  <div class="icon"><span class="ion-ios-arrow-down"></span></div>
+                  <select name="variant" id="variant-select" class="form-control">
+                    {% for variant in variants %}
+                      <option value="{{ variant.id }}">{{ variant.variant_name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="w-100"></div>
+        <div class="col-md-12">
+          <p style="color: #000;">{{ product.product_description }}</p>
+        </div>
+
+        {% if variant.variant_stock <= 0 %}
+          <h1 class="text-danger"> Out Of stock</h1>
+        {% else %}
+          {% if in_cart %}
+            <p><a href="{% url 'cart' %}" class="btn btn-black btn-sm py-2 px-3">View In Cart</a></p>
+          {% else %}
+            <div class="input-group col-md-6 d-flex mb-3">
+              <span class="input-group-btn mr-2">
+                <button type="button" class="quantity-left-minus btn" data-type="minus" data-field="">
+                  <i class="ion-ios-remove"></i>
+                </button>
+              </span>
+              <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1" min="1" max="100">
+              <span class="input-group-btn ml-2">
+                <button type="button" class="quantity-right-plus btn" data-type="plus" data-field="">
+                  <i class="ion-ios-add"></i>
+                </button>
+              </span>
+            </div>
+            <button id="add-to-cart-button" type="submit" class="btn btn-black btn-sm py-2 px-3" {% if variant.variant_stock <= 0 %}disabled{% endif %}>
+              Add to Cart
+            </button>
+          {% endif %}
+        {% endif %}
+
+        <form action="{% url 'add_to_wishlist' %}" method="post">
+          {% csrf_token %}
+          <input type="hidden" name="variant_id" value="{{ variant.id }}">
+          <button type="submit" class="wishlist-button">&#x2665;</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  $(document).ready(function() {
+    $('#variant-select').change(function() {
+      var selectedVariantId = $(this).val();
+
+      // Perform an AJAX request to fetch the details of the selected variant
+      // Replace the URL with the actual endpoint that returns the variant details
+      $.ajax({
+        url: '/get-variant-details',
+        type: 'GET',
+        data: { variantId: selectedVariantId },
+        success: function(response) {
+          // Update the product details on the page
+          var productImage = response.product_image;
+          var productPrice = response.product_price;
+          var variantName = response.variant_name;
+          var variantProduct = response.product_name;
+          var variantDescription = response.variant_description;
+          var variantStock = response.variant_stock;
+          var variantStatus = response.variant_status;
+
+          // Update the image source and price text
+          $('#product-image').attr('src', productImage);
+          $('#product-price').text('₹' + productPrice);
+          $('#product-variant-name').html(variantProduct + ' ' + variantName);
+          $('#variant-description').text(variantDescription);
+
+          if (variantStock <= 0) {
+            $('#stock-availability').text('Out of Stock');
+            $('#add-to-cart-button').prop('disabled', true);
+          } else {
+            $('#stock-availability').text('In Stock');
+            $('#add-to-cart-button').prop('disabled', false);
+          }
+
+          // Update other details as needed
+        },
+        error: function(xhr, status, error) {
+          // Handle error response if needed
+        }
+      });
+    });
+
+    $('.quantity-right-plus').click(function(e) {
+      e.preventDefault();
+      var quantity = parseInt($('#quantity').val());
+      if (quantity < 1) {
+        quantity = 1;
+      }
+      $('#quantity').val(quantity + 1);
+    });
+
+    $('.quantity-left-minus').click(function(e) {
+      e.preventDefault();
+      var quantity = parseInt($('#quantity').val());
+      if (quantity > 1) {
+        $('#quantity').val(quantity - 1);
+      }
+    });
+  });
+</script>
+

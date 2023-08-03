@@ -1,0 +1,115 @@
+{% extends 'admin/admin_layout/admin_main.html' %}
+{% load static %}
+
+{% block title %}Brand-details{% endblock %}
+{% block style %}
+<style>
+.edit-button {
+   color: green;
+    }
+</style>
+{% endblock style %}
+
+
+{% block body%}
+<!-- Add Brand Modal -->
+<div class="modal fade" id="addBrandModal" tabindex="-1" aria-labelledby="addBrandModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addBrandModalLabel">Add Brand</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form method="POST" action="{% url 'add_brand' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="brandName" class="form-label">Brand Name</label>
+              <input type="text" class="form-control" id="brandName" name="brand_name" required>
+            </div>
+
+            <div class="form-group">
+              <label for="brandStatus" class="form-label">Status</label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="brandStatus" name="brand_status" value="true" checked>
+                <label class="form-check-label" for="brandStatus">Active</label>
+              </div>
+            </div>
+           
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Add</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- Add Brand Modal END-->
+  
+  <!-- Table Start -->
+  <div class="container-fluid pt-4 px-">
+    <div class="row g-4">
+      <div class="col-sm-12 col-xl-12">
+        <div class="bg-light rounded h-100 p-4">
+          <button type="button" class="btn btn-primary  float-end mx-5" data-bs-toggle="modal" data-bs-target="#addBrandModal">
+            Add Brand
+          </button>
+          <h3 class="mb-4 mt-" style="text-align: center;">Brand Table</h3>
+          <table class="table table-hover">
+            <thead>
+              <tr> 
+                <th scope="col">Brand-ID</th>
+                <th scope="col">Brand Name</th>
+                <th scope="col">Brand Status</th>
+                <th scope="col">Account Actions</th>
+              </tr>
+            </thead>
+            <tbody>   
+              {% for b in brand %}
+              <tr>
+                <td scope="row">{{ b.id }}</td>
+                <td>{{ b.brand_name }}</td>
+                <td> {% if b.brand_status %} Active {% else %} Inactive {% endif %} </td>
+                <td><button type="button" class="btn btn-link rounded-pill edit-button " data-bs-toggle="modal" data-bs-target="#editBrandModal{{b.id}}">Edit</button><td>
+  <!-- Edit BRAND form -->
+                    <div class="modal fade" id="editBrandModal{{b.id}}" tabindex="-1" aria-labelledby="editBrandModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content"> 
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="editBrandModalLabel">Edit Brand</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+
+                              <form method="POST" action="{% url 'edit_brand' b.id %}">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                  <label for="brandName" class="form-label">Brand Name</label>
+                                  <input type="text" class="form-control" id="brandName" placeholder="{{b.brand_name}}"name="editbrand_name" required>
+                                </div>
+
+                                  <div class="form-check">
+                                 <input class="form-check-input" type="checkbox" id="brandStatus" name="editbrand_status" {% if c.brand_status  %}checked{% endif %}>
+                                   <label class="form-check-label" for="brandStatus"> Active                                       
+                                  </label>
+                                   </div> 
+
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Update</button>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                                                             
+                   <!-- Edit BRAND modal form end -->   
+
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+{% endblock body %}

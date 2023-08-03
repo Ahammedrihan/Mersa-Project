@@ -1,0 +1,2203 @@
+def add_product(request):
+    categories = Category.objects.all()
+    if request.method == 'POST':
+        # Retrieve data from the form
+
+        product_name = request.POST.get('productName')
+        category_name=request.POST.get('category')
+        Product_Image = request.FILES.get('image')
+        category = Category.objects.get(categoryes=category_name)
+        category_id = category.pk
+        description = request.POST.get('description')
+        sizes = [ 'medium', 'large','xl']
+        print('product image:',Product_Image)
+        if Product.objects.filter(Product_name=product_name):
+            return render(request,'admin/add_product.html')
+        else:
+        # Create the product object
+             product = Product(Product_name=product_name, category=category,description=description,Product_Image=Product_Image)
+             product.save()
+        # Create the product sizes and associate them with the product
+        for size in sizes:
+            checkbox = request.POST.get(f'checkbox-{size}')
+            if checkbox:
+                price = request.POST.get(f'price-{size}')
+                # offer_price = request.POST.get(f'offer-price-{size}')
+                quantity = request.POST.get(f'productCount-{size}')
+                product_size = ProductSize(product_id=product, size=size, price=price,Quantity=quantity,)
+                product_size.save()
+    return render(request,"admin/add_product.html",{'categories':categories})
+
+
+
+
+# class ProductSize(models.Model):
+
+#     product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
+#     size = models.CharField(max_length=100)
+#     mrp = models.DecimalField(max_digits=8,decimal_places=2,default=0)
+#     discount = models.DecimalField(max_digits=8,decimal_places=2,default=0)
+#     offer_price = models.DecimalField(max_digits=8,decimal_places=2,default=0)
+#     quantity = models.IntegerField(default=0)
+#     size_images = models.ImageField(upload_to='productsize_images/',default=None,blank=True,null=True)
+
+    # def __str__(self):
+    #     return self.product_id
+
+
+
+# def add_category(request):
+#     if request.method == 'GET':
+#         return render(request,'addcategory.html')
+#     if request.method == 'POST':
+#         category_name=request.POST.get('category_name')
+#         img1=request.FILES['image'] 
+#         category_name1=category_name[:-1]
+#         test_string = 'category_name'
+#         matched = re.match("[/b"+category_name+"/b]", test_string)
+#         is_match = bool(matched)
+#         print(is_match)
+#         if is_match == True:
+#             messages.info(request,"Category Exist")
+#             return redirect('categorylist')
+#         elif Category.objects.filter(category_name__icontains=category_name):
+#             messages.info(request,"Category Exist")
+#             return redirect('categorylist')
+
+#         elif Category.objects.filter(category_name__icontains=category_name1):
+#             messages.info(request,'Category is  exist')
+#             return redirect('categorylist')
+#         category=Category.objects.create(category_name=category_name,img1=img1)
+#         category.save()
+#         return redirect ('categorylist')
+
+
+
+
+
+# def addproduct(request):
+#     if request.method == 'POST':
+#         product_name=request.POST.get('product_name')  
+#         des=request.POST.get('des')     
+#         image=request.FILES['image'] 
+#         image2=request.FILES['image2'] 
+#         image3=request.FILES['image3'] 
+#         image4=request.FILES['image4'] 
+#         gram=request.POST.get('gram')
+#         price=request.POST.get('price')    
+#         # dis_price=request.POST.get('dis_price')
+#         category=request.POST.get('id')
+#         category=Category.objects.get(id=category)  
+#         stock=request.POST.get('stock')
+#         products= product_details.objects.create(product_name=product_name,des=des,img=image,img2=image2,img3=image3,img4=image4,price=price,category=category,stock=stock,gram=gram)
+#         products.save()
+
+#         return redirect(productlist)
+
+
+    
+  
+
+# def productlist(request):
+#     products = Product.objects.filter(is_deleted=False)
+#     return render(request, 'product_list.html', {'products': products})
+
+# def soft_delete_product(request, product_id):
+#     product = Product.objects.get(id=product_id)
+#     product.soft_delete()
+#     return redirect('product_list')
+
+# def unlist_product(request, product_id):
+#     product = Product.objects.get(id=product_id)
+#     product.is_deleted = False
+#     product.save()
+#     return redirect('product_list')
+
+
+
+
+
+
+# def add_product(request):
+#     categories = Category.objects.all()
+#     if request.method == 'POST':
+#         # Retrieve data from the form
+
+#         product_name = request.POST.get('productName')
+#         category_name=request.POST.get('category')
+#         Product_Image = request.FILES.get('image')
+#         category = Category.objects.get(categoryes=category_name)
+#         category_id = category.pk
+#         description = request.POST.get('description')
+#         sizes = [ 'medium', 'large','xl']
+#         print('product image:',Product_Image)
+#         if Product.objects.filter(Product_name=product_name):
+#             return render(request,'admin/add_product.html')
+#         else:
+#         # Create the product object
+#              product = Product(Product_name=product_name, category=category,description=description,Product_Image=Product_Image)
+#              product.save()
+#         # Create the product sizes and associate them with the product
+#         for size in sizes:
+#             checkbox = request.POST.get(f'checkbox-{size}')
+#             if checkbox:
+#                 price = request.POST.get(f'price-{size}')
+#                 # offer_price = request.POST.get(f'offer-price-{size}')
+#                 quantity = request.POST.get(f'productCount-{size}')
+#                 product_size = ProductSize(product_id=product, size=size, price=price,Quantity=quantity,)
+#                 product_size.save()
+#     return render(request,"admin/add_product.html",{'categories':categories})
+
+
+
+
+class Variant(models.Model):
+    variant_name = models.CharField(max_length=100, unique=True)
+    mrp = models.Decimalfield(max_digits=8, decimal_places=2, default=0)
+    discount = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    offer_price = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    variant_description = models.Textfield(max_length=2000, blank=True)
+    product = models.Foreignkey(Product, null=True, on_delete=models.CASCADE)
+    variant_stock = models.IntegerField(default=0)
+
+
+class VariantImage(models.Model):
+    variant = models.Foreignkey(Variant, null=True, on_delete=models.CASCADE)
+    image = models.ImageField()
+
+# in form.py
+
+
+def form_valid(self, form):
+    obj = form.save()
+    image = self.request.FILES['image']  # add an image field in html form <input type="file" name="image">
+    VariantImage.objects.create(obj, image)
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% extends 'layouts/main.html' %}
+{% load static %}
+
+
+{% block body %}
+
+
+
+
+    <div class="hero-wrap hero-bread" style="background-image: url({% static 'images/lumwebslider.jpg' %});">
+      <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+          <div class="col-md-9 ftco-animate text-center">
+          	<p class="breadcrumbs"><span class="mr-2"><a href="index.html">shop by</a></span> <span>Products</span></p>
+            <h1 class="mb-0 bread">Products</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+    {% comment %} <section class="ftco-section">
+    	<div class="container">
+    		<div class="row justify-content-center">
+    			<div class="col-md-10 mb-5 text-center">
+    				<ul class="product-category">
+    					<li><a href="#" class="active">All</a></li>
+    					<li><a href="#">Vegetables</a></li>
+    					<li><a href="#">Fruits</a></li>
+    					<li><a href="#">Juice</a></li>
+    					<li><a href="#">Dried</a></li>
+    				</ul>
+    			</div>
+    		</div>
+            <div class="row">
+                {% for pro in variant %}
+                <div class="col-md-6 col-lg-3 ftco-animate">
+                    <div class="product">
+                        <a href="#" class="img-prod">
+                            <img class="img-fluid" src="{{ pro.product_image.url }}" alt="Colorlib Template">
+                            <div class="overlay"></div>
+                        </a>
+                        <div class="text py-3 pb-4 px-3 text-center">
+                            <h3><a href="#">{{ pro.var }}</a></h3>
+                            <div class="d-flex">
+                                <div class="pricing">
+                                    <p class="price"><span>${{ pro.price }}</span></p>
+                                </div>
+                            </div>
+                            <div class="bottom-area d-flex px-3">
+                                <div class="m-auto d-flex">
+                                    <a href="#" class="add-to-cart d-flex justify-content-center align-items-center text-center">
+                                        <span><i class="ion-ios-menu"></i></span>
+                                    </a>
+                                    <a href="#" class="buy-now d-flex justify-content-center align-items-center mx-1">
+                                        <span><i class="ion-ios-cart"></i></span>
+                                    </a>
+                                    <a href="#" class="heart d-flex justify-content-center align-items-center">
+                                        <span><i class="ion-ios-heart"></i></span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+    		<div class="row mt-5">
+          <div class="col text-center">
+            <div class="block-27">
+              <ul>
+                <li><a href="#">&lt;</a></li>
+                <li class="active"><span>1</span></li>
+                <li><a href="#">2</a></li>
+                <li><a href="#">3</a></li>
+                <li><a href="#">4</a></li>
+                <li><a href="#">5</a></li>
+                <li><a href="#">&gt;</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+    	</div>
+    </section> {% endcomment %}
+
+	
+	<section class="ftco-section">
+		<div class="container">
+		  <div class="row">
+			<div class="col-lg-6 mb-5 ftco-animate">
+			  <a href="" class="image-popup">
+				<img src="{{ product.product_image.url }}" class="img-fluid" alt="Colorlib Template">
+			  </a>
+			</div>
+			<div class="col-lg-6 product-details pl-md-5 ftco-animate">
+				<div id="product-image">
+			  <h3>{{ product.product_name }}</h3>
+				</div>
+			  <div class="rating d-flex">
+				<p class="text-left mr-4">
+				  <a href="#" class="mr-2">5.0</a>
+				  <a href="#"><span class="ion-ios-star-outline"></span></a>
+				  <a href="#"><span class="ion-ios-star-outline"></span></a>
+				  <a href="#"><span class="ion-ios-star-outline"></span></a>
+				  <a href="#"><span class="ion-ios-star-outline"></span></a>
+				  <a href="#"><span class="ion-ios-star-outline"></span></a>
+				</p>
+				<p class="text-left mr-4">
+				  <a href="#" class="mr-2" style="color: #000;">100 <span style="color: #bbb;">Rating</span></a>
+				</p>
+				<p class="text-left">
+				  <a href="#" class="mr-2" style="color: #000;">500 <span style="color: #bbb;">Sold</span></a>
+				</p>
+			  </div>
+			  
+			  <div id="product-details">
+				<h3>{{ product.product_name }}</h3>
+				<p class="price"><span id="product-price">{{variant.mr}}</span></p>
+			  </div>
+			  <p>
+				A small river named Duden flows by their place and supplies it with the necessary regelialia.
+				It is a paradisematic country, in which roasted parts of sentences fly into your mouth.
+				Text should turn around and return to its own, safe country. But nothing the copy said could convince her and so it didn’t take long until.
+			  </p>
+			  <div class="row mt-4">
+				<div class="col-md-6">
+				  <div class="form-group d-flex">
+					<div class="select-wrap">
+					  <div class="icon"><span class="ion-ios-arrow-down"></span></div>
+					  
+						<select name="variant" id="variant-select" class="form-control">
+							{% for variant in variants %}
+							  <option value="{{ variant.id }}">{{ variant.variant_name }}</option>
+							{% endfor %}
+						  </select>
+					  </select>
+					</div>
+				  </div>
+				</div>
+				<div class="input-group col-md-6 d-flex mb-3">
+				  <span class="input-group-btn mr-2">
+					<button type="button" class="quantity-left-minus btn" data-type="minus" data-field="">
+					  <i class="ion-ios-remove"></i>
+					</button>
+				  </span>
+				  <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1" min="1" max="100">
+				  <span class="input-group-btn ml-2">
+					<button type="button" class="quantity-right-plus btn" data-type="plus" data-field="">
+					  <i class="ion-ios-add"></i>
+					</button>
+				  </span>
+				</div>
+				<div class="w-100"></div>
+				<div class="col-md-12">
+				  <p style="color: #000;">600 kg available</p>
+				</div>
+			  </div>
+			  <p><a href="cart.html" class="btn btn-black py-3 px-5">Add to Cart</a></p>
+			</div>
+		  </div>
+		</div>
+	  </section>
+	  
+	  
+
+    <section class="ftco-section">
+    	<div class="container">
+				<div class="row justify-content-center mb-3 pb-3">
+          <div class="col-md-12 heading-section text-center ftco-animate">
+          	<span class="subheading">Products</span>
+            <h2 class="mb-4">Related Products</h2>
+            <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia</p>
+          </div>
+        </div>   		
+    	</div>
+
+
+
+
+
+
+{% comment %} 
+		<section class="ftco-section">
+			<div class="container">
+			  <div class="row">
+				<div class="col-lg-6 mb-5 ftco-animate">
+				  <a href="#" class="image-popup"><img src="{{ product.product_image.url }}" class="img-fluid" alt="Colorlib Template"></a>
+				</div>
+				<div class="col-lg-6 product-details pl-md-5 ftco-animate">
+				  <h3>{{ product.product_name }}</h3>
+				  <!-- Other product details -->
+				  <div class="form-group d-flex">
+					<div class="select-wrap">
+					  <div class="icon"><span class="ion-ios-arrow-down"></span></div>
+					  <select name="variant" id="variant" class="form-control">
+						{% for variant in variants %}
+						  <option value="{{ variant.id }}">{{ variant.variant_name }}</option>
+						{% endfor %}
+					  </select>
+					</div>
+				  </div>
+				  <!-- Other sections of the template -->
+				</div>
+			  </div>
+			</div>
+		  </section> {% endcomment %}
+		  
+
+
+
+
+
+
+    	<div class="container">
+    		<div class="row">
+    			<div class="col-md-6 col-lg-3 ftco-animate">
+    				<div class="product">
+    					<a href="#" class="img-prod"><img class="img-fluid" src="images/product-1.jpg" alt="Colorlib Template">
+    						<span class="status">30%</span>
+    						<div class="overlay"></div>
+    					</a>
+    					<div class="text py-3 pb-4 px-3 text-center">
+    						<h3><a href="#">Bell Pepper</a></h3>
+    						<div class="d-flex">
+    							<div class="pricing">
+		    						<p class="price"><span class="mr-2 price-dc">$120.00</span><span class="price-sale">$80.00</span></p>
+		    					</div>
+	    					</div>
+	    					<div class="bottom-area d-flex px-3">
+	    						<div class="m-auto d-flex">
+	    							<a href="#" class="add-to-cart d-flex justify-content-center align-items-center text-center">
+	    								<span><i class="ion-ios-menu"></i></span>
+	    							</a>
+	    							<a href="#" class="buy-now d-flex justify-content-center align-items-center mx-1">
+	    								<span><i class="ion-ios-cart"></i></span>
+	    							</a>
+	    							<a href="#" class="heart d-flex justify-content-center align-items-center ">
+	    								<span><i class="ion-ios-heart"></i></span>
+	    							</a>
+    							</div>
+    						</div>
+    					</div>
+    				</div>
+    			</div>
+    			<div class="col-md-6 col-lg-3 ftco-animate">
+    				<div class="product">
+    					<a href="#" class="img-prod"><img class="img-fluid" src="images/product-2.jpg" alt="Colorlib Template">
+    						<div class="overlay"></div>
+    					</a>
+    					<div class="text py-3 pb-4 px-3 text-center">
+    						<h3><a href="#">Strawberry</a></h3>
+    						<div class="d-flex">
+    							<div class="pricing">
+		    						<p class="price"><span>$120.00</span></p>
+		    					</div>
+	    					</div>
+    						<div class="bottom-area d-flex px-3">
+	    						<div class="m-auto d-flex">
+	    							<a href="#" class="add-to-cart d-flex justify-content-center align-items-center text-center">
+	    								<span><i class="ion-ios-menu"></i></span>
+	    							</a>
+	    							<a href="#" class="buy-now d-flex justify-content-center align-items-center mx-1">
+	    								<span><i class="ion-ios-cart"></i></span>
+	    							</a>
+	    							<a href="#" class="heart d-flex justify-content-center align-items-center ">
+	    								<span><i class="ion-ios-heart"></i></span>
+	    							</a>
+    							</div>
+    						</div>
+    					</div>
+    				</div>
+    			</div>
+    			<div class="col-md-6 col-lg-3 ftco-animate">
+    				<div class="product">
+    					<a href="#" class="img-prod"><img class="img-fluid" src="images/product-3.jpg" alt="Colorlib Template">
+	    					<div class="overlay"></div>
+	    				</a>
+    					<div class="text py-3 pb-4 px-3 text-center">
+    						<h3><a href="#">Green Beans</a></h3>
+    						<div class="d-flex">
+    							<div class="pricing">
+		    						<p class="price"><span>$120.00</span></p>
+		    					</div>
+	    					</div>
+    						<div class="bottom-area d-flex px-3">
+	    						<div class="m-auto d-flex">
+	    							<a href="#" class="add-to-cart d-flex justify-content-center align-items-center text-center">
+	    								<span><i class="ion-ios-menu"></i></span>
+	    							</a>
+	    							<a href="#" class="buy-now d-flex justify-content-center align-items-center mx-1">
+	    								<span><i class="ion-ios-cart"></i></span>
+	    							</a>
+	    							<a href="#" class="heart d-flex justify-content-center align-items-center ">
+	    								<span><i class="ion-ios-heart"></i></span>
+	    							</a>
+    							</div>
+    						</div>
+    					</div>
+    				</div>
+    			</div>
+    			<div class="col-md-6 col-lg-3 ftco-animate">
+    				<div class="product">
+    					<a href="#" class="img-prod"><img class="img-fluid" src="images/product-4.jpg" alt="Colorlib Template">
+    						<div class="overlay"></div>
+    					</a>
+    					<div class="text py-3 pb-4 px-3 text-center">
+    						<h3><a href="#">Purple Cabbage</a></h3>
+    						<div class="d-flex">
+    							<div class="pricing">
+		    						<p class="price"><span>$120.00</span></p>
+		    					</div>
+	    					</div>
+    						<div class="bottom-area d-flex px-3">
+	    						<div class="m-auto d-flex">
+	    							<a href="#" class="add-to-cart d-flex justify-content-center align-items-center text-center">
+	    								<span><i class="ion-ios-menu"></i></span>
+	    							</a>
+	    							<a href="#" class="buy-now d-flex justify-content-center align-items-center mx-1">
+	    								<span><i class="ion-ios-cart"></i></span>
+	    							</a>
+	    							<a href="#" class="heart d-flex justify-content-center align-items-center ">
+	    								<span><i class="ion-ios-heart"></i></span>
+	    							</a>
+    							</div>
+    						</div>
+    					</div>
+    				</div>
+    			</div>
+    		</div>
+    	</div>
+    </section>
+
+		
+  <script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+		$(document).ready(function(){
+
+		var quantitiy=0;
+		   $('.quantity-right-plus').click(function(e){
+		        
+		        // Stop acting like a button
+		        e.preventDefault();
+		        // Get the field name
+		        var quantity = parseInt($('#quantity').val());
+		        
+		        // If is not undefined
+		            
+		            $('#quantity').val(quantity + 1);
+
+		          
+		            // Increment
+		        
+		    });
+
+		     $('.quantity-left-minus').click(function(e){
+		        // Stop acting like a button
+		        e.preventDefault();
+		        // Get the field name
+		        var quantity = parseInt($('#quantity').val());
+		        
+		        // If is not undefined
+		      
+		            // Increment
+		            if(quantity>0){
+		            $('#quantity').val(quantity - 1);
+		            }
+		    });
+		    
+		});
+	</script>
+
+	<script>
+
+	     $(document).ready(function() {
+		$('#variant-select').change(function() {
+		  var selectedVariantId = $(this).val();
+		  
+		  // Perform an AJAX request to fetch the details of the selected variant
+		  // Replace the URL with the actual endpoint that returns the variant details
+		  $.ajax({
+			url: '/get-variant-details',
+			type: 'GET',
+			data: { variantId: selectedVariantId },
+			success: function(response) {
+			  // Update the product details on the page
+			  var productImage = response.product_image;
+			  var productPrice = response.product_price;
+			  
+			  // Update the image source and price text
+			  $('#product-image').attr('src', productImage);
+			  $('#product-price').text('$' + productPrice);
+			  
+			  // Update other details as needed
+			  
+			  // ...
+			},
+			error: function(xhr, status, error) {
+			  // Handle error response if needed
+			}
+		  });
+		});
+	  });
+	  
+
+	</script>
+{% endblock body %}
+
+
+
+
+
+  <script>
+		$(document).ready(function(){
+
+		var quantitiy=0;
+		   $('.quantity-right-plus').click(function(e){
+		        
+		        // Stop acting like a button
+		        e.preventDefault();
+		        // Get the field name
+		        var quantity = parseInt($('#quantity').val());
+		        
+		        // If is not undefined
+		            
+		            $('#quantity').val(quantity + 1);
+
+		          
+		            // Increment
+		        
+		    });
+
+		     $('.quantity-left-minus').click(function(e){
+		        // Stop acting like a button
+		        e.preventDefault();
+		        // Get the field name
+		        var quantity = parseInt($('#quantity').val());
+		        
+		        // If is not undefined
+		      
+		            // Increment
+		            if(quantity>0){
+		            $('#quantity').val(quantity - 1);
+		            }
+		    });
+		    
+		});
+	</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% extends 'layouts/main.html' %}
+{% load static %}
+
+
+
+
+
+
+{% block style %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+          crossorigin="anonymous">
+{% endblock %}
+{% block body %}
+
+
+    <div class="container-md mt-3">
+        <div class="row">
+            <div class="col-md-8 mb-4">
+                <div class="card mb-4">
+                    <div class="card-header py-3">
+                        <h5 class="mb-0">Biling details</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- 2 column grid layout with text inputs for the first and last names -->
+                        <select name="address_id" id="selectAddress" onchange="function1()">
+                            <option value="">Select address</option>
+                            {% for address in addresses %}
+                                <option value="{{ address.id }}"
+                                        data-id="{{ address.id }}"
+                                        data-name="{{ address.name }}"
+                                        data-email="{{ address.user.email }}"
+                                        data-number="{{ address.phone_number }}"
+                                        data-houseno="{{address.house_no}}"
+                                        data-housename="{{address.house_name}}"
+                                        data-street="{{ address.street }}"
+                                        data-city="{{ address.city }}"
+                                        data-state="{{ address.state }}"
+                                        data-country="{{ address.country }}"
+                                        data-zip="{{ address.postal_code }}">{{ address.street }}</option>
+                            {% endfor %}
+                            <option value="none">None</option>
+                        </select>
+                        <div class="row mb-4">
+                            <div class="col">
+                                <div class="form-outline">
+                                    <input type="text" id="Name" class="form-control" >
+                                    <label class="form-label" for="form7Example1">Name</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-outline">
+                                    <input type="text" id="Email" class="form-control" >
+                                    <label class="form-label" for="form7Example2">Email</label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 2 column grid layout with text inputs for the phone_number and last n -->
+                        <div class="row mb-4">
+                            <div class="col">
+                                <div class="form-outline">
+                                    <input type="text" id="number" class="form-control" >
+                                    <label class="form-label" for="form7Example1">Phone</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-outline">
+                                    <input type="text" id="houseno" class="form-control" >
+                                    <label class="form-label" for="form7Example2">House no</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2 column grid layout with text inputs for the huse name and last n -->
+                        <div class="row mb-4">
+                            <div class="col">
+                                <div class="form-outline">
+                                    <input type="text" id="housename" class="form-control" >
+                                    <label class="form-label" for="form7Example1">House name</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-outline">
+                                    <input type="text" id="street" class="form-control" >
+                                    <label class="form-label" for="form7Example2">Street</label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 2 column grid layout with text inputs for the City and State -->
+                        <div class="row mb-4">
+                            <div class="col">
+                                <div class="form-outline">
+                                    <input type="text" id="city" class="form-control" >
+                                    <label class="form-label" for="form7Example1">City</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-outline">
+                                    <input type="text" id="state" class="form-control" >
+                                    <label class="form-label" for="form7Example2">State</label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 2 column grid layout with text inputs for the Country and Zipcode -->
+                        <div class="row mb-4">
+                            <div class="col">
+                                <div class="form-outline">
+                                    <input type="text" id="country" class="form-control" >
+                                    <label class="form-label" for="form7Example1">Country</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-outline">
+                                    <input type="text" id="zip" class="form-control" >
+                                    <label class="form-label" for="form7Example2">Zip</label>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Checkbox -->
+                        <div class="d-flex justify-content-center">
+                            <div class="form-check d-flex justify-content-between mb-2">
+                                <input class="form-check-input me-2"
+                                       type="checkbox"
+                                       value=""
+                                       id="form7Example8"
+                                       checked />
+                                <label class="form-check-label" for="form7Example8">Create an account?</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card mb-4">
+                    <div class="card-header py-3">
+                        <h5 class="mb-0">Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Product_name</th>
+                                            <th scope="col">Sub_total</th>
+                                            <th scope="col">total_qty</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in cart.cart_items.all %}
+                                            <tr>
+                                                <td>{{ item.product.Product_name }}</td>
+                                                <td>₹{{ item.get_subtotal }}</td>
+                                                <td>{{ item.quantity }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                                Products_MRP
+                                <span><strong>₹{{ cart.get_total_price }}</strong></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                                Products_Qty
+                                <span><strong>{{ cart.get_total_quantity }}</strong></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                Shipping Charge
+                                <span>{{ cart.get_shipping_charge }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
+                                <div>
+                                    <strong>Payble amount</strong>
+                                    {% comment %} <strong>
+                                        <p class="mb-0">(including VAT)</p>
+                                    </strong> {% endcomment %}
+                                </div>
+                                <span><strong>₹{{ cart.get_total }}</strong></span>
+                            </li>
+                        </ul>
+                        <form >
+                            {% if balance.balance > 0 %}
+                    <div class="wallet">
+                        <input class="form-check-input" type="checkbox" value="wallet" id="wallet"
+                            name="wallet" onchange="getValueFromCheckbox()" >
+                        <label class="form-check-label">Take Amount From Wallet (Your wallet:{{balance.balance}})</label>
+                    </div>
+                    {% endif %}
+                            {% csrf_token %}
+                            <div class="form-check">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       value="COD"
+                                       id="paymentCOD"
+                                       name="payment_method"
+                                       onchange="handlePaymentMethodChange(this)">
+                                <label class="form-check-label" for="paymentCOD">Cash on Delivery (COD)</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       value="Razorpay"
+                                       id="paymentPayPal"
+                                       name="payment_method"
+                                       onchange="handlePaymentMethodChange(this)">
+                                <label class="form-check-label" for="paymentPayPal">Razorpay</label>
+                            </div>
+                            <input type="hidden" name="address_id" id="adid">
+                        </div>
+                    </form>
+                    <button 
+                class="btn btn-primary btn-lg btn-block" onclick="function1()"
+                data-bs-toggle="modal" data-bs-target="#exampleModal">Make purchase</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- checkout end-->
+<!-- Modal -->
+<div class="modal fade"
+     id="exampleModal"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="exampleModalLongTitle"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'place_order' %}" method="post" class="pay-form" id="pay-form">
+                    {% csrf_token %}
+                    <div class="card mr-2">
+                        <div class="card-body bg-light">
+                            <h5 class="card-title">To Address</h5>
+                            <input type="text" id="idpassed" name="idpassed" value="" hidden>
+                            <div class="row mb-4">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="mname"><strong>Name:</strong></label>
+                                        <input type="text" id="mname" class="form-control" readonly>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="mhouseno"><strong>House No:</strong></label>
+                                        <input type="text" id="mhouseno" class="form-control" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-4">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="mhousename"><strong>House Name:</strong></label>
+                                        <input type="text" id="mhousename" class="form-control" readonly>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="mstreet"><strong>Street:</strong></label>
+                                        <input type="text" id="mstreet" class="form-control" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-4">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="mcity"><strong>City:</strong></label>
+                                        <input type="text" id="mcity" class="form-control" readonly>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="mstate"><strong>State:</strong></label>
+                                        <input type="text" id="mstate" class="form-control" name="test" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-4">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="mcountry"><strong>Country:</strong></label>
+                                        <input type="text" id="mcountry" class="form-control" name="test" readonly>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="mzip"><strong>Postal Code:</strong></label>
+                                        <input type="text" id="mzip" class="form-control" name="test" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="mnumber"><strong>Phone Number:</strong></label>
+                                <input type="text" id="mnumber" class="form-control" name="test" readonly>
+                            </div>
+                        </div>
+                    </div>
+                
+                    
+                    {% for items in cart_items %}
+                        <div class="card shadow-0 border mb-4 mt-3">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <img src="{{ items.product.Product_Image.url }}"
+                                             class="img-fluid"
+                                             alt="Phone">
+                                    </div>
+                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                        <p class="text-muted mb-0">{{ items.product.Product_name }}</p>
+                                    </div>
+                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                        <p class="text-muted mb-0 small">{{ items.product_size.size }}</p>
+                                    </div>
+                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                        <p class="text-muted mb-0 small">Qty: {{ items.quantity }}</p>
+                                    </div>
+                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                        <p class="text-muted mb-0 small">₹{{ items.get_subtotal }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <div class="subtotal d-flex justify-content-between align-items-center">
+                        <h5>Total Quantity</h5>
+                        <h5>{{ cart.get_total_quantity }}</h5>
+                    </div>
+                    <div class="subtotal d-flex justify-content-between align-items-center">
+                        <h5>Total Price</h5>
+                        <h5>₹{{ cart.get_total_price }}</h5>
+                    </div>
+                    <div class="subtotal d-flex justify-content-between align-items-center">
+                        <h5>Offer Price</h5>
+                        <h5>₹{{ cart.get_price_difference }}</h5>
+                    </div>
+                    <div class="shipping d-flex justify-content-between align-items-center">
+                        <h5>Shipping</h5>
+                        <h5>₹{{ cart.get_shipping_charge }}</h5>
+                    </div>
+                    <div class="order-total d-flex justify-content-between align-items-center">
+                        <h5>Order Total</h5>
+                        <h5 id="paymentAmount">₹</h5>
+                    </div>
+                    <input id="wallet_modal" name="wallet_modal" value="" hidden>
+                        <input id="gettotal" name="gettotal" value="{{cart.get_total}}" hidden>
+                        <input id="balance" name="balance" value="{{balance.balance}}" hidden>
+                    <div class="order-total d-flex justify-content-between align-items-center">
+                        <h5>Payment Method</h5>
+                        <h5 id="payment_modal" name="payment_model" value=""></h5>
+                        <input id="payment_modal2" name="payment_modal2" value="" hidden>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary">Confirm Order</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+    function function1() {
+        var selectAddress = document.getElementById("selectAddress");
+        var selectedOption = selectAddress.options[selectAddress.selectedIndex];
+        var selectedValue = selectedOption.value;
+        
+        if (selectedValue === "none") {
+                // Clear the address fields
+                document.getElementById('Name').value = "";
+                document.getElementById('Email').value = "";
+                document.getElementById('number').value = "";
+                document.getElementById('houseno').value = "";
+                document.getElementById('housename').value = "";
+                document.getElementById('street').value = "";
+                document.getElementById('city').value = "";
+                document.getElementById('state').value = "";
+                document.getElementById('country').value = "";
+                document.getElementById('zip').value = "";
+            } else {
+                // Fetch the selected address details dynamically
+                var name = selectedOption.getAttribute("data-name");
+                var email = selectedOption.getAttribute("data-email");
+                var number = selectedOption.getAttribute("data-number");
+                var houseno = selectedOption.getAttribute("data-houseno");
+                var housename = selectedOption.getAttribute("data-housename");
+                var street = selectedOption.getAttribute("data-street");
+                var city = selectedOption.getAttribute("data-city");
+                var state = selectedOption.getAttribute("data-state");
+                var country = selectedOption.getAttribute("data-country");
+                var zip = selectedOption.getAttribute("data-zip");
+                var adid = selectedOption.getAttribute("data-id");
+
+                document.getElementById('Name').value = name;
+                document.getElementById('Email').value = email;
+                document.getElementById('number').value = number;
+                document.getElementById('houseno').value = houseno;
+                document.getElementById('housename').value = housename;
+                document.getElementById('street').value = street;
+                document.getElementById('city').value = city;
+                document.getElementById('state').value = state;
+                document.getElementById('country').value = country;
+                document.getElementById('zip').value = zip;
+                document.getElementById('adid').value = adid;
+
+                document.getElementById('mnumber').value=number;
+                document.getElementById('idpassed').value=adid
+                document.getElementById('mzip').value=zip;
+                document.getElementById('mcountry').value=country;
+                document.getElementById('mstate').value=state;
+                document.getElementById('mcity').value=city;
+                document.getElementById('mstreet').value=street;
+                document.getElementById('mname').value=name;
+                document.getElementById('mhousename').value=housename 
+                document.getElementById('mhouseno').value=houseno          
+
+
+            }
+        }
+        function handlePaymentMethodChange(checkbox) {
+            var checkboxes = document.querySelectorAll('input[name="payment_method"]');
+            
+            checkboxes.forEach(function (checkbox) {
+                if (checkbox !== event.target) {
+                    checkbox.checked = false;
+                }
+            });
+
+            document.getElementById('payment_modal').innerText = event.target.value
+            document.getElementById('payment_modal2').value = event.target.value
+        }
+        function getValueFromCheckbox() {
+            var checkboxValue = $("#wallet").is(":checked");
+            console.log("Checkbox value:", checkboxValue);
+            document.getElementById('wallet_modal').value=checkboxValue
+            $("#modalCheckboxValue").text(checkboxValue);
+        }
+    </script>
+    
+    <script>
+        $(document).ready(function() {
+            $('#exampleModal').on('shown.bs.modal', function() {
+                console.log("here")
+
+        var wallet = document.getElementById('wallet_modal').value;
+        console.log(wallet)
+       var total = document.getElementById('gettotal').value;
+        console.log(total)
+        var balance = document.getElementById('balance').value;
+        console.log(balance)
+        var paymentAmount;
+
+if (wallet === "true") {
+    if (balance > total) {
+        paymentAmount = 0;
+    } else {
+        paymentAmount = total - balance;
+    }
+} else {
+    paymentAmount = total;
+}
+
+
+document.getElementById('paymentAmount').textContent = "₹" + paymentAmount;
+})
+        })
+</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    {% endblock %}
+
+
+
+
+
+stylesheet"
+          integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+          crossorigin="anonymous">
+{% endblock %}
+{% block co
+ 
+
+
+
+
+
+
+
+ {% block scripts %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=AW7nOGHIIO7vRm5qC_4yJP9Ho9-6uSUFrxsvsgW_N3oBx8Hw98Tb3RWyaIKd_ipLA5ePgY1E-g1iRqgz&currency=USD"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    
+
+    <script>
+        // Assign jQuery to a different variable to avoid conflicts
+        var jq = jQuery.noConflict();
+
+        jq(document).ready(function() {
+            jq('.element').fadeIn();
+            jq('.element').fadeOut();
+        });
+
+        jq(function() {
+            paypal.Buttons({
+            style: {
+                layout: 'vertical',
+                color: 'gold',
+                shape: 'rect',
+            },
+            onClick: function(data, actions) {
+                var fname = jq("[name='fname']").val();
+                var lname = jq("[name='lname']").val();
+                var email = jq("[name='email']").val();
+                var phone = jq("[name='phone']").val();
+                var address = jq("[name='address']").val();
+                var city = jq("[name='city']").val();
+                var state = jq("[name='state']").val();
+                var pincode = jq("[name='pincode']").val();
+                var token = jq("[name='csrfmiddlewaretoken']").val();
+
+                if (fname === "" || lname === "" || email === "" || phone === "" || address === "" || city === "" || state === "" || pincode === "") {
+                swal("Alert", "All fields are mandatory!", "error");
+                return false;
+                } else {
+                return true;
+                }
+            },
+            createOrder: function(data, actions) {
+                return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                    value: '{{ grand_total | stringformat:'d' }}'
+                    }
+                }]
+                });
+            },
+            onApprove: function(data, actions) {
+                return actions.order.capture().then(function(orderData) {
+                
+                var fname = jq("[name='fname']").val();
+                var lname = jq("[name='lname']").val();
+                var email = jq("[name='email']").val();
+                var phone = jq("[name='phone']").val();
+                var address = jq("[name='address']").val();
+                var city = jq("[name='city']").val();
+                var state = jq("[name='state']").val();
+                var pincode = jq("[name='pincode']").val();
+                var token = jq("[name='csrfmiddlewaretoken']").val();
+                var paymentMethod = jq("[name='payment_method']").val();
+                var data = {
+                    "fname": fname,
+                    "lname": lname,
+                    "email": email,
+                    "phone": phone,
+                    "address": address,
+                    "city": city,
+                    "state": state,
+                    "pincode": pincode,
+                    "payment_method": paymentMethod,
+                    "payment_id": orderData.id,
+                    "csrfmiddlewaretoken": token
+                };
+                jq.ajax({
+                    method: "POST",
+                    url: "{% url 'placeorder' %}",
+                    data: data,
+                    success: function(response) {
+                        swal("Congratulations!", response.status, "success").then((value) => {
+                            window.location.href =response.redirect_url;
+                    });
+                    }
+                });
+                
+                });
+            },
+            
+            }).render('#paypal-button-container');
+        });
+    </script>
+
+
+
+<body>
+
+ <div class="main-content">
+  
+    
+    <div style=" padding-top: 20px;
+  padding-bottom: 20px;">
+
+     <a href="#editProfileModal" class="btn btn-info" data-toggle="modal">Edit profile</a>
+     </div>
+
+    <div class="container-fluid mt--7" style="  padding-top: 20px;
+  padding-bottom: 20px;">
+      <div class="row">
+        <div class="col-xl-4 order-xl-2 mb-5 mb-xl-0">
+          <div class="card card-profile shadow">
+            <div class="row justify-content-center">
+              <div class="col-lg-3 order-lg-2">
+                <div class="card-profile-image">
+                  <a href="#">
+                    <td class="align-middle" ><img src="" alt="image" width="50px" height="50px"></td> 
+
+                   <img src="/userImage/{{userData.images}}" alt="{{userData.images}}" class="rounded-circle">
+
+                                 
+                   <img src="/userImage/{{userData.images}}" alt="image{{images}}"  class="rounded-circle"> 
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
+              <div class="d-flex justify-content-between">
+                <a href="/my-orders" class="btn btn-sm btn-info mr-4" style="align-self: self-start;">ORDERS</a>
+                <h3>Wallet Balance:{{walletBalance.walletAmount}}</h3>
+              </div>
+            </div>
+            <div class="card-body pt-0 pt-md-4">
+              <div class="row">
+                <div class="col">
+                  <div class="card-profile-stats d-flex justify-content-center mt-md-5">
+                    <div>
+                      <span class="heading">20</span>
+                      <span class="description">CartItems</span>
+                    </div>
+                    <div>
+                      <span class="heading">10</span>
+                      <span class="description">Purchases</span>
+                    </div>
+                    <div>
+                      <span class="heading">89</span>
+                      <span class="description">Wishlist</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="text-center">
+                <h3>
+                 {{userData.name}}<span class="font-weight-light">, 21</span>
+                </h3>
+                <div class="h5 font-weight-300">
+                  <i class="ni location_pin mr-2"></i>{{defaultAddress.state}}
+                </div>
+                <div class="h5 mt-4">
+                  <i class="ni business_briefcase-24 mr-2"></i>Full Stack Developer - MERN
+                </div>
+                <div>
+                  <i class="ni education_hat mr-2"></i>Took Graduation on Computer Science - BCA
+                </div>
+                <hr class="my-4">
+                 <p>Ryan — the name taken by Melbourne-raised, Brooklyn-based Nick Murphy — writes, performs and records all of his own music.</p> 
+                <a href="#">Show more</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-8 order-xl-1">
+          <div class="card bg-secondary shadow">
+            <div class="card-header bg-white border-0">
+              <div class="row align-items-center">
+                <div class="col-8">
+                  <h3 class="mb-0">My account</h3>
+                </div>
+                <div class="col-4 text-right">
+                  <a href="/address" class="btn btn-sm btn-primary">Manage address</a>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <form>
+                <h6 class="heading-small text-muted mb-4">User information</h6>
+                <div class="pl-lg-4">
+                  <div class="row">
+                    <div class="col-lg-6">
+                      <div class="form-group focused">
+                        <label class="form-control-label" for="input-username">Username</label>
+                        <input type="text" id="input-username" class="form-control form-control-alternative" placeholder="Username" value="{{userData.name}}" readonly>
+                      </div>
+                    </div>
+                    <div class="col-lg-6">
+                      <div class="form-group">
+                        <label class="form-control-label" for="input-email">Email address</label>
+                        <input type="email" id="input-email" class="form-control form-control-alternative" placeholder="{{userData.email}}" readonly>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-6">
+                      <div class="form-group focused">
+                        <label class="form-control-label" for="input-first-name">Phone Number</label>
+                        <input type="text" id="input-first-name" class="form-control form-control-alternative" placeholder="First name" value="{{userData.mobile}}" readonly>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <hr class="my-4">
+                <!-- Address -->
+                <h6 class="heading-small text-muted mb-4">Contact information</h6>
+                <div class="pl-lg-4">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="form-group focused">
+                        <label class="form-control-label" for="input-address">Address</label>
+                        <input id="input-address" class="form-control form-control-alternative" placeholder="address" value="{{defaultAddress.address}}" type="text" readonly>
+                      </div>
+                    </div>
+                  </div>
+                 
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <div class="form-group focused">
+                        <label class="form-control-label" for="input-city">City</label>
+                        <input type="text" id="input-city" class="form-control form-control-alternative" placeholder="city" value="{{defaultAddress.city}}" readonly>
+                      </div>
+                    </div>
+                    <div class="col-lg-4">
+                      <div class="form-group focused">
+                        <label class="form-control-label" for="input-country">state</label>
+                        <input type="text" id="input-country" class="form-control form-control-alternative" placeholder="state" value="{{defaultAddress.state}}" readonly>
+                      </div>
+                    </div>
+                    <div class="col-lg-4">
+                      <div class="form-group">
+                        <label class="form-control-label" for="input-country">Postal code</label>
+                        <input type="text" id="input-postal-code" class="form-control form-control-alternative" placeholder="Pin code" value="{{defaultAddress.pincode}}" readonly>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                
+               
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
+
+  <!-- Modal -->
+  <div class="modal fade" id="editProfileModal" tabindex="-1" role="dialog" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editProfileModalLabel">Edit Profile </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Form to edit profile -->
+          <form action="/edit" method="post" enctype="multipart/form-data">
+         
+             <div class="form-group">
+              <label for="edit-username">Image</label>
+              <input type="file" class="form-control" name="image" id="edit-username">
+            </div>
+            <div class="form-group">
+              <label for="edit-username">Username</label>
+               <input type="text" class="form-control" name="name" id="edit-username" value="{{userData.name}}"> 
+                <input type="text" class="form-control" name="name" id="edit-username" value="{{userData.name}}">
+
+            </div>
+            <div class="form-group">
+              <label for="edit-email">Email</label>
+              <input type="email" class="form-control" name="email" id="edit-email" value="{{userData.email}}">
+            </div>
+            <div class="form-group">
+              <label for="edit-phone">Phone Number</label>
+              <input type="text" class="form-control" name="mobile" id="edit-phone" value="{{userData.mobile}}">
+            </div>
+           
+             <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+          </form>
+        </div>
+       
+      </div>
+    </div>
+  </div>
+  </body>
+
+
+
+
+  
+{% extends 'layouts/main.html' %}
+{% load static %}
+
+
+{% block head %}
+
+{% endblock head %}
+
+{% block body %}
+
+<section class="ftco-section"  style="background-color:#bbf2b5;">
+    <h1 class="text-center">checkout page</h1>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-xl-7 ftco-animate">
+       
+
+<!--select address show -->
+
+
+
+
+        <select name="address_id" id="selectAddress" onchange="function1()">
+          <option value="">Select address</option>
+          {% for address in addresses %} 
+              <option value="{{ address.id }}"
+                      data-id="{{ address.id }}"
+                      data-fname="{{ address.first_name }}"
+                      data-lname="{{ address.last_name }}"
+                      data-email="{{ address.email }}"
+                      data-number="{{ address.phone }}"
+                      data-address-line1="{{address.address_line1}}"
+                      data-address-line2="{{address.address_line2 }}"
+                      data-city="{{ address.city }}"
+                      data-state="{{ address.state }}"
+                      data-country="{{ address.country }}"
+                      data-zip="{{ address.postcode }}">{{ address.address_line1 }}</option>
+          {% endfor %}
+          <option value="none">None</option>
+      </select>
+
+<!-- address show  end-->
+
+        <div class="billing-form" >  
+          <h3 class="mb-4 billing-heading text-center">Billing Details</h3>
+          {% for user in userprofile %}{% endfor %}
+          <div class="row align-items-end">
+            <div class="col-md-6"> 
+              <div class="form-group">
+                <label for="firstname">First Name</label>
+                <input type="text" id="FName"   name="first_name" class="form-control " placeholder=""  >
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="lastname">Last Name</label>
+                <input type="text" id="LName"  name="last_name" class="form-control" placeholder="" >
+              </div>
+            </div>
+            
+            
+            <div class="col-md-6">
+                <div class="form-group">
+                  <label for="lastname">Phone</label>
+                  <input type="text" id="number"   name="phone" class="form-control" placeholder=""  >
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                  <label for="lastname">Email</label>
+                  <input type="email"  id="Email"  name="email" class="form-control" placeholder="" >
+                </div>
+            </div>
+            
+          
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="streetaddress">Address-line1</label>
+                <input
+                  type="text" 
+                  class="form-control" id="address_line1"  name="address_line1"
+                  placeholder="House number and street name"  
+                >
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="streetaddress">Address-line2</label>
+                <input
+                  type="text"
+                  class="form-control" id="address_line2"   name="address_line2"
+                  placeholder="Appartment, suite, unit etc: (optional)"
+                   >
+              </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                  <label for="lastname">Country</label>
+                  <input type="text" id="country"   name="country" class="form-control" placeholder=""  >
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                  <label for="lastname">State</label>
+                  <input type="text" id="state" name="state" class="form-control" placeholder=""  >
+                </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="towncity">Town / City</label>
+                <input type="text" id="city" name="city" class="form-control" placeholder=""   >
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="postcodezip">Postcode / ZIP *</label>
+                <input type="text" id="zip" name="postcode"  class="form-control" placeholder=""   >
+              </div>
+            </div>
+            <div class="w-100"></div>
+         
+            <div class="col-md-12">
+                <div class="form-group">
+                  <label for="emailaddress">Add-Note</label>
+                  <input type="text" name="order_note" class="form-control" placeholder="" >
+                </div>
+              </div>
+          </div>
+        
+        <!-- END -->
+      </div>
+      <div class="col-xl-5">
+        <div class="row mt-5 pt-3">
+          <div class="col-md-12 d-flex mb-5">
+            <div class="cart-detail cart-total p-3 p-md-4 text-center">
+              <h3 class="billing-heading mb-4 text-center">Order Total</h3>
+
+              <p class="d-flex">
+                <span>Total Amount</span>
+                <span>₹ {{total_mrp}}</span>
+              </p>
+              <p class="d-flex">
+                <span>Offer Applied</span>
+                <span>₹ {{total_discount}}</span>
+              </p>
+              <p class="d-flex">
+                <span>Offer Rate</span>
+                <span>₹ {{total_offer_price}}</span>
+              </p>
+             
+              <p class="d-flex">
+                <span>Delivery</span>
+                <span>₹ {{delivery}}</span>
+              </p>
+       
+              <hr />
+              <p class="d-flex total-price">
+                <span>Total</span>
+                <span>₹ {{grand_total}}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+
+          <div class="col-md-12">
+            <div class="cart-detail p-3 p-md-4">
+            <h6 class="billing-heading mb-4 text-center">Payment Method</h6>
+
+            <div class="form-check"><input class="form-check-input"
+                     type="checkbox"
+                     value="COD"
+                     id="paymentCOD"
+                     name="payment_method"
+                     onchange="handlePaymentMethodChange(this)">
+              <label class="form-check-label" for="paymentCOD">Cash on Delivery (COD)</label>
+          </div>
+          <div class="form-check">
+              <input class="form-check-input"
+                     type="checkbox"
+                     value="Razorpay"
+                     id="paymentPayPal"
+                     name="payment_method"
+                     onchange="handlePaymentMethodChange(this)">
+              <label class="form-check-label" for="paymentPayPal">Razorpay</label>
+          </div>
+          <input type="hidden" name="address_id" id="adid">
+      </div>
+
+   {% comment %} <a href="{% url 'shop' %}" class="btn btn-primary btn-lg   mt-2">Continue shopping</a> {% endcomment %}
+   </div>
+
+
+   
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+  Choose Address
+</button>
+
+
+<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Select Address</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {% for profile in profiles %}
+        <div class="card" >
+          <div class="card-body">
+            <h5 class="card-title">{{ profile.first_name }} {{ profile.last_name }}</h5>
+            <p class="card-text">
+              
+              <span>Email: {{ profile.email }}</span>
+              <br>
+              <span>Phone: {{ profile.phone }}</span>
+              <br>
+              <span>Address: {{ profile.address_line1 }} , {{ profile.address_line2 }}</span>
+              <br>
+              <span>City: {{ profile.city }}, {{ profile.state }}</span>
+              <br>
+              <span>Place: {{ profile.postcode }}, {{ profile.state }}</span>
+            </p>
+            
+         
+            <button type="button" class="btn btn-primary select-profile" data-profile-id="{{ profile.id }}">Select</button>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="save-changes">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+   
+  {% comment %} <button 
+  class="btn btn-primary btn-lg btn-block" onclick="function1()"
+  data-bs-toggle="modal" data-bs-target="#exampleModal">Make purchase</button> {% endcomment %}
+
+
+   <div class="modal fade"
+     id="exampleModal"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="exampleModalLongTitle"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form action="{% url 'place_order' %}" method="post" class="pay-form" id="pay-form">
+                {% csrf_token %}
+                    <div class="card mr-2">
+                        <div class="card-body bg-light">
+                            <h5 class="card-title">To Address</h5>
+                            <input type="text" id="idpassed" name="idpassed" value="" hidden>
+                            <div class="row mb-4">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="mfname"><strong>First Name:</strong></label>
+                                        <input type="text" id="mfname" class="form-control" readonly>
+                                    </div>
+                                </div>
+                                  <div class="col">
+                                      <div class="form-group">
+                                          <label for="mlname"><strong>Last Name:</strong></label>
+                                          <input type="text" id="mlname" class="form-control" readonly>
+                                      </div>
+                                  </div>
+                                </div>
+                              <div class="row mb-4">
+                                  <div class="col">
+                                      <div class="form-group">
+                                          <label for="maddress_line1"><strong>Address line 1:</strong></label>
+                                          <input type="text" id="maddress_line1" class="form-control" readonly>
+                                      </div>
+                                  </div>
+                              
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="maddress_line2"><strong>Address line 2:</strong></label>
+                                        <input type="text" id="maddress_line2" class="form-control" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                              
+                            <div class="row mb-4">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="mcity"><strong>City:</strong></label>
+                                        <input type="text" id="mcity" class="form-control" readonly>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="mstate"><strong>State:</strong></label>
+                                        <input type="text" id="mstate" class="form-control" name="test" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-4">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="mcountry"><strong>Country:</strong></label>
+                                        <input type="text" id="mcountry" class="form-control" name="test" readonly>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="mzip"><strong>Postal Code:</strong></label>
+                                        <input type="text" id="mzip" class="form-control" name="test" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="mnumber"><strong>Phone Number:</strong></label>
+                                <input type="text" id="mnumber" class="form-control" name="test" readonly>
+                            </div>
+                        </div>
+                    </div>
+                
+                    
+                    {% for items in cart_items %}
+                        <div class="card shadow-0 border mb-4 mt-3">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <img src="{{ items.product.Product_Image.url }}"
+                                             class="img-fluid"
+                                             alt="Phone">
+                                    </div>
+                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                        <p class="text-muted mb-0">{{ items.product.Product_name }}</p>
+                                    </div>
+                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                        <p class="text-muted mb-0 small">{{ items.product_size.size }}</p>
+                                    </div>
+                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                        <p class="text-muted mb-0 small">Qty: {{ items.quantity }}</p>
+                                    </div>
+                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                        <p class="text-muted mb-0 small">₹{{ items.get_subtotal }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <div class="subtotal d-flex justify-content-between align-items-center">
+                        <h5>Total Quantity</h5>
+                        <h5>{{ cart.get_total_quantity }}</h5>
+                    </div>
+                    <div class="subtotal d-flex justify-content-between align-items-center">
+                        <h5>Total Price</h5>
+                        <h5>₹{{ cart.get_total_price }}</h5>
+                    </div>
+                    <div class="subtotal d-flex justify-content-between align-items-center">
+                        <h5>Offer Price</h5>
+                        <h5>₹{{ cart.get_price_difference }}</h5>
+                    </div>
+                    <div class="shipping d-flex justify-content-between align-items-center">
+                        <h5>Shipping</h5>
+                        <h5>₹{{ cart.get_shipping_charge }}</h5>
+                    </div>
+                    <div class="order-total d-flex justify-content-between align-items-center">
+                        <h5>Order Total</h5>
+                        <h5 id="paymentAmount">₹</h5>
+                    </div>
+                    <input id="wallet_modal" name="wallet_modal" value="" hidden>
+                        <input id="gettotal" name="gettotal" value="{{cart.get_total}}" hidden>
+                        <input id="balance" name="balance" value="{{balance.balance}}" hidden>
+                    <div class="order-total d-flex justify-content-between align-items-center">
+                        <h5>Payment Method</h5>
+                        <h5 id="payment_modal" name="payment_model" value=""></h5>
+                        <input id="payment_modal2" name="payment_modal2" value="" hidden>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary">Confirm Order</button>
+            </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+                
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- .col-md-8 -->
+    </div>
+  </div>
+</section>
+<!-- .section -->
+
+
+
+
+
+
+<script>
+  // Assign jQuery to a different variable to avoid conflicts
+  var jq = jQuery.noConflict();
+
+  jq(document).ready(function() {
+      jq('.element').fadeIn();
+      jq('.element').fadeOut();
+  });
+
+  jq(function() {
+      paypal.Buttons({
+          style: {
+              layout: 'vertical',
+              color: 'gold',
+              shape: 'rect',
+          },
+          onClick: function(data, actions) {
+              var first_name = jq("[name='first_name']").val();
+              var last_name = jq("[name='last_name']").val();
+              var email = jq("[name='email']").val();
+              var phone = jq("[name='phone']").val();
+              var address_line1 = jq("[name='address_line1']").val();
+              var address_line2 = jq("[name='address_line2']").val();
+              var country = jq("[name='county']").val();
+              var city = jq("[name='city']").val();
+              var state = jq("[name='state']").val();
+              var postcode = jq("[name='postcode']").val();
+              var token = jq("[name='csrfmiddlewaretoken']").val();
+
+              if (first_name === "" || last_name === "" || email === "" || phone === "" || address_line1 === "" || city === "" || state === "" || postcode === "") {
+                  swal("Alert", "All fields are mandatory!", "error");
+                  return false;
+              } else {
+                  return true;
+              }
+          },
+          createOrder: function(data, actions) {
+              return actions.order.create({
+                  purchase_units: [{
+                      amount: {
+                          value: '{{ grand_total | stringformat:"d" }}'
+                      }
+                  }]
+              });
+          },
+          onApprove: function(data, actions) {
+              return actions.order.capture().then(function(orderData) {
+                console.log('capture result', orderData, JSON.stringify(orderData,null,2));
+                  console.log(orderData);
+                  console.log(details);
+                  alert('Transaction complete'+details.payer.name.given_name + '!');
+                  var first_name = jq("[name='first_name']").val();
+                  var last_name = jq("[name='last_name']").val();
+                  var email = jq("[name='email']").val();
+                  var phone = jq("[name='phone']").val();
+                  var address_line1 = jq("[name='address_line1']").val();
+                  var address_line2 = jq("[name='address_line2']").val();
+                  var country = jq("[name='county']").val();
+                  var city = jq("[name='city']").val();
+                  var state = jq("[name='state']").val();
+                  var postcode = jq("[name='postcode']").val();
+                  var token = jq("[name='csrfmiddlewaretoken']").val();
+                   var data = {
+                      "first_name": first_name,
+                      "last_name": last_name,
+                      "email": email,
+                      "phone": phone,
+                      "address_line1": address_line1,
+                      "address_line2": address_line2,  // Added missing comma here
+                      "city": city,
+                      "country": country,  // Added missing comma here
+                      "state": state,
+                      "postcode": postcode,
+                      "payment_method": "Paid by Paypal",
+                      "payment_id": orderData.id,
+                      "csrfmiddlewaretoken": token
+                  };
+                  jq.ajax({
+                      method: "POST",
+                      url: "{% url 'place_order' %}",
+                      data: data,
+                      success: function(response) {
+                          swal("Congratulations!", response.status, "success").then((value) => {
+                              window.location.href = response.redirect_url
+                          });
+                      }
+                  });
+              });
+          }
+      }).render('#paypal-button-container');
+  });
+</script>
+
+
+
+
+<script src="https://www.paypal.com/sdk/js?client-id=&currency=USD"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+
+
+
+<script>
+  function function1() {
+      var selectAddress = document.getElementById("selectAddress");
+      var selectedOption = selectAddress.options[selectAddress.selectedIndex];
+      var selectedValue = selectedOption.value;
+      
+    
+              // Fetch the selected address details dynamically
+              var fname = selectedOption.getAttribute("data-fname");
+              var lname = selectedOption.getAttribute("data-lname");
+              var email = selectedOption.getAttribute("data-email");
+              var number = selectedOption.getAttribute("data-number");
+              var address_line1 = selectedOption.getAttribute("data-address-line1");
+              var address_line2 = selectedOption.getAttribute("address.address_line2");
+              var city = selectedOption.getAttribute("data-city");
+              var state = selectedOption.getAttribute("data-state");
+              var country = selectedOption.getAttribute("data-country");
+              var zip = selectedOption.getAttribute("data-zip");
+              var adid = selectedOption.getAttribute("data-id");
+
+              document.getElementById('FName').value = fname;
+              document.getElementById('LName').value = lname;
+              document.getElementById('Email').value = email;
+              document.getElementById('number').value = number;
+              document.getElementById('address_line1').value = address_line1;
+              document.getElementById('address_line2').value = address_line2;
+              document.getElementById('city').value = city;
+              document.getElementById('state').value = state;
+              document.getElementById('country').value = country;
+              document.getElementById('zip').value = zip;
+              document.getElementById('adid').value = adid;
+
+
+              document.getElementById('mfname').value=fname;
+              document.getElementById('mlname').value=lname;
+              document.getElementById('mnumber').value=number;
+              document.getElementById('idpassed').value=adid
+              document.getElementById('mzip').value=zip;
+              document.getElementById('mcountry').value=country;
+              document.getElementById('mstate').value=state;
+              document.getElementById('mcity').value=city;
+              document.getElementById('mstreet').value=street;
+              
+              document.getElementById('maddress_line1').value=address_line1 
+              document.getElementById('maddress_line2').value=address_line2          
+
+
+          }
+      
+      function handlePaymentMethodChange(checkbox) {
+          var checkboxes = document.querySelectorAll('input[name="payment_method"]');
+          
+          checkboxes.forEach(function (checkbox) {
+              if (checkbox !== event.target) {
+                  checkbox.checked = false;
+              }
+          });
+
+          document.getElementById('payment_modal').innerText = event.target.value
+          document.getElementById('payment_modal2').value = event.target.value
+      }
+    
+  </script>
+
+
+{% endblock body %}
+
+
+{% extends 'admin/admin_layout/admin_main.html' %}
+{% load static %}
+
+{% block title %}Users Order-details{% endblock %}
+
+{% block body %}
+
+<div class="container-fluid pt-4 px-">
+    <div class="row g-4">
+      <div class="col-sm-12 col-xl-12">
+        <div class="bg-light rounded h-100 p-4">
+          <h3 class="mb-4 mt-" style="text-align: center;">Variant Table</h3>
+          <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Order_id</th>
+                    <th>User</th>
+                    <th>Product</th>
+                    <th>Sizes</th>
+                    <th>Price</th>
+                    <th>Qty</th>
+                    <th>Total</th>
+                    <th>Pay_mthd</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>   
+            </thead>
+            <tbody>
+                {% for o in orders %}
+                {% for order_item in order_items  %}
+                  {% if order_item.order_no == o %}
+                <tr>
+                  <td>{{ o.order_number }}</td>
+                  <td>
+                      <div>
+                        <p >{{ o.email }}</p>
+                      </div>
+                    </div>
+                  </td>     
+                  <td>   
+                    <div class="d-flex align-items-center">
+                      <img
+                        src="{{ order_item.product.product_image.url }}"
+                        alt=""
+                        style="width: 45px; height: 45px"
+                        class="rounded-circle border border-success"
+                      />
+                      <div class="ms-3">
+                        <p class="fw-bold mb-1">{{ order_item.product.product_name }}</p>
+                        <p class="fw-bold mb-1">{{ order_item.varaiant.variant_name }}</p>
+                       
+                      </div>
+                    </div>
+                  </td>
+                  
+                  <td>
+                    <p class="fw-bold mb-1">{{ order_item.varaiant.variant_name }}</p>
+                  </td>
+                  <td>
+                    <p class="fw-bold mb-1">₹{{ order_item.amount }}</p>
+                  </td>
+                  <td>
+                    <p class="fw-bold mb-1">{{ order_item.quantity }}</p>
+                  </td>
+                  <td>
+                    <p class="fw-bold mb-1">₹{{ o.order_total_amount }}</p>
+                  </td>
+                  <td>
+                    <p class="fw-bold mb-1">{{ o.payment_mode}}</p>
+                  </td>
+                
+                  <td>
+                    <div class="badge badge-success rounded-pill d-inline text-danger">{{ o.order_status }}<br></div><br>
+                  </td>
+                  <td>
+                    <button type="button" class="btn btn-danger edit-button mt-1" data-toggle="modal" data-target="#editModal{{ o.id }}"><i class="fas fa-edit"></i></button> 
+                  </td> 
+                
+                </tr>
+                {% endif %}
+                {% endfor %}
+                  {% endfor %}
+                </tbody>
+              </table>
+        </div>
+    </div>
+</div>
+
+{% for o in orders %}
+  <div class="modal fade" id="editModal{{ o.id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{ o.id }}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModalLabel{{ o.id }}">Edit Order Status</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="{% url 'change_order_status' %}" method="post">
+            {% csrf_token %}
+            {% for order_item in order_items %}
+              {% if order_item.order_no == o %}
+                <div class="form-group">
+                  <label for="orderStatus{{ order_item.id }}">Order Status</label>
+                  <select class="form-control" id="orderStatus{{ order_item.id }}" name="order_status">
+                    {% for choice in choices %}
+                      <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                    {% endfor %}
+                  </select>
+                  <input type="text" name="order_item_id" value="{{ order_item.id }}">
+                  <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endfor %}
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjd04D2kBIFXQpeoTz1HIcje39wm4jDKdf19U8g14ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const statusButtons = document.querySelectorAll('.edit-button');
+    statusButtons.forEach(button => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        const orderId = button.dataset.orderId;
+        openModal(orderId);
+      });
+    });
+  });
+
+  function openModal(orderId) {
+    const modalId = `editModal${orderId}`;
+    document.getElementById('orderdetails').value = orderId;
+    const modal = new bootstrap.Modal(document.getElementById(modalId)); // Initialize the modal
+    modal.show();
+  }
+</script>
+
+{% endblock body %}

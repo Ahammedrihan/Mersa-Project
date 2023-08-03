@@ -1,0 +1,11 @@
+{% if value %}
+  <ul class="file-upload-list">
+    {% for file in value %}
+      <li>{{ file.name }} ({{ file.size|filesizeformat }})</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+<div class="custom-file">
+  <input type="file" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %}>
+  <label class="custom-file-label" for="{{ widget.id_for_label }}">Choose file</label>
+</div>

@@ -1,0 +1,113 @@
+{% extends 'layouts/main.html' %}
+{% load static %}
+
+{% block body %}
+
+
+
+
+  <section class="ftco-section ftco-cart">
+
+    {% if not wishlists %}
+				<h1 class="text-center">Your Wishlist Is Empty</h1>
+
+				<div class="text-center">
+					<a href="{% url 'shop' %}" class="btn btn-primary">Continue shopping</a>
+				</div>
+
+				{% else %}
+
+
+
+
+        {% if messages %}
+        <div id="message-container">
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+
+          <div class="container">
+              <div class="row">
+                
+              <div class="col-md-12 ftco-animate">
+                  <div class="cart-list">
+                    
+                    <h1 class="text-center">Wishlist Page</h1>
+                      <table class="table">
+                          <thead class="thead-primary">
+                            <tr class="text-center">
+                              <th>&nbsp;</th>
+                              <th>Product List</th>
+                              <th>product_name</th>
+                              <th>Add To Cart</th>
+                              <th>Remove</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for wishlist in wishlists %}
+                            <tr class="text-center">
+
+                              <td></td>
+
+                              
+                              <td class="image-prod"><div class="img" style="background-image:url({{wishlist.product.product_image.url}});"></div></td>
+                              
+                              <td class="product-name">
+                                  <h3>{{wishlist.product.product_name}}</h3>
+                                  <p>{{wishlist.product.product_description}}</p>
+                              </td>
+                              
+                              <td class="price"><td class="price">
+                                <form method="POST" action="{% url 'add_cart' wishlist.product.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm py-2 px-3 colorful-button">
+                                        Add to Cart
+                                    </button>
+                                </form>
+                            </td></td>
+                              
+                              <td class="product-remove"><a href="{% url 'remove_wishlist' wishlist.product_id %}"><span class="ion-ios-close"></span></a></td>
+
+    
+                            
+                            </tr><!-- END TR-->
+
+
+                            {% endfor %}
+                             
+                          </tbody>
+                        </table>
+                    </div>
+              </div>
+          </div>
+          {% endif %}
+          </div>
+      </section>
+
+ 
+
+<script>
+  // Set the duration for the message to be displayed in milliseconds
+  var messageDuration = 5000; // 5 seconds
+
+  // Function to close the message after the specified duration
+  function closeMessage() {
+      $('#message-container').fadeOut();
+  }
+
+  // Check if there are messages, and if so, set the timer to close the message
+  $(document).ready(function() {
+      var messageContainer = $('#message-container');
+      if (messageContainer.length) {
+          setTimeout(closeMessage, messageDuration);
+      }
+  });
+</script>
+
+{% endblock %}
+

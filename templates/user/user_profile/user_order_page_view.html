@@ -1,0 +1,151 @@
+{% extends 'layouts/main.html' %}
+{% load static %}
+
+{% block body %}
+
+<div class="container" style="margin: 0 auto;width: 80%;padding: 50px;background: #f1f1f1;margin-top: 50px;margin-bottom: 50px;">
+    <div class="row invoice row-printable">
+        <div class="col-md-12">
+            <!-- col-lg-12 start here -->
+            <div class="panel panel-default plain" id="dash_0">
+                <h3>Invoice</h3>
+                <!-- Start .panel -->
+                <div class="panel-body p30">
+                    <div class="row">
+                        <!-- Start .row -->
+                        <div class="col-lg-6">
+                            <div class="invoice-from">
+                                <ul class="list-unstyled text-left">
+                                    <li><strong>Invoiced From</strong></li>
+                                    <li>MERSA</li>
+                                    <li>Mersa@gmail.com</li>
+                                    <li>9656992650</li>
+                                    
+
+ 
+                                </ul>
+                            </div>
+                            <!-- col-lg-6 start here -->
+                            {% comment %} <div class="invoice-logo"><img src="/images/logo.png" alt="Invoice logo" style="max-height: 40px;"></div> {% endcomment %}
+                        </div>
+                        <!-- col-lg-6 end here -->
+                        <div class="col-lg-6">
+                            <!-- col-lg-6 start here -->
+                            <div class="invoice-from">
+                                <ul class="list-unstyled text-right">
+                                    <li><strong>Invoiced To</strong></li>
+                                    <li>{{ order.first_name }} {{ order.last_name }}</li>
+                                    <li>{{ order.email }}</li>
+                                    <li>{{ order.phone }}</li>
+                                    <li>{{ order.address_line1 }}</li>
+                                    <li>{{ order.address_line2 }}</li>
+                                    <li>{{ order.city }}, {{ order.state }}</li>
+                                    <li>{{ order.country }}, {{ order.postcode }}</li>
+
+ 
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- col-lg-6 end here -->
+                        <div class="col-lg-12">
+                            <!-- col-lg-12 start here -->
+                            <div class="invoice-details mt25">
+                                <div class="well">
+                                    <ul class="list-unstyled mb0">
+                                        <li><strong>Order ID:</strong> #{{ order.order_number }}</li>
+                                        <li><strong>Transaction:</strong> {{ order.payment_id }}</li>
+                                        <li><strong>Order Date:</strong> {{ order.order_created_date }}</li>
+                                        <li><strong>Payment Mode:</strong> {{ order.payment_mode }}</li>
+                                        <li><strong>Status:</strong> {{ order.order_status }}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                           
+                            <div class="invoice-items">
+                                <div class="table-responsive" style="overflow: hidden; outline: none;" tabindex="0">
+                                    <table class="table table-bordered table-condensed"> <!-- Added "table-condensed" class -->
+                                        <thead>
+                                            <tr><th class="per20 text-center">Image</th>
+                                                <th class="per20 text-center">Product</th> <!-- Changed class from "per70" to "per60" -->
+                                                <th class="per20 text-center">Qty</th> <!-- Changed class from "per5" to "per20" -->
+                                                <th class="per20 text-center">Mrp</th>
+                                                <th class="per20 text-center">Offer</th>
+                                                <th class="per20 text-center">Discount</th> 
+                                                <th class="per20 text-center">Status</th> <!-- Changed class from "per25" to "per20" -->
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for item in order_items %}
+                                            <tr> 
+                                                <td> <img
+                                                src="{{ item.product.product_image.url }}"
+                                                alt=""
+                                                style="width: 45px; height: 45px"
+                                                class="rounded-circle border border-success"
+                                              /></td> 
+                                                
+                                                <td>{{ item.product.product_name }} {{ item.varaiant.variant_name }}</td>
+                                                <td class="text-center">{{ item.quantity }}</td>
+                                                <td class="text-center">{{ item.varaiant.mrp }}</td>
+                                                <td class="text-center">{{ item.varaiant.offer_price }}</td>
+                                                <td class="text-center">{{ item.varaiant.discount }}</td>
+                                                <td>
+                                                    {% if item.product_status == 'Cancelled' %}
+                                                    <p class ="text-danger">Cancelled</p>
+                                                    
+                                                    {% elif item.product_status == 'Pending' %}
+                                                        <a href="{% url 'cancel_product' item.id %}" class="btn btn-danger">Cancel</a>
+                                                       
+                                                    {% elif item.product_status == 'Delivered' %}
+                                                        <p class ="text-primary">Delivered</p>
+                                                        <a href="{% url 'return_product' item.id %}" class="btn btn-warning">Return</a>
+                                                    {% elif item.product_status == 'Returned' %}
+                                                          <p class ="text-danger">Returned</p>
+                                                    {% elif item.product_status == 'Confirmed' %}
+                                                          <p class ="text-primary">Order confirmed</p>
+                                                    {% elif item.product_status == 'Out for Shipping' %}
+                                                          <p class ="text-primary">Product Out for Shipping</p>
+                                                    {% elif item.product_status == 'Out for Delivery' %}
+                                                       <p class ="text-primary">Product Out for Delivery</p>
+
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th colspan="5" class="text-right">Sub Total:</th>
+                                                <th class="text-center">{{ total_mrp }}</th>
+                                            </tr>
+                                            <tr>
+                                                <th colspan="5" class="text-right">Total Discount Applied</th>
+                                                <th class="text-center">{{discount}}</th>
+                                            </tr>
+                                            <tr>
+                                                <th colspan="5" class="text-right">Shipping</th>
+                                                <th class="text-center">{{shipping}}</th>
+                                            </tr>
+                                            <tr>
+                                                <th colspan="5" class="text-right text-danger">Grand Total:</th>
+                                                <th class="text-center text-primary">{{ offer_price }}</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="invoice-footer mt25">
+                                <p class="text-center">Thank you for shopping with us!</p>
+                            </div>
+                        </div>
+                        <!-- col-lg-12 end here -->
+                    </div>
+                    <!-- End .row -->
+                </div>
+            </div>
+            <!-- End .panel -->
+        </div>
+        <!-- col-lg-12 end here -->
+    </div>
+</div>
+{% endblock %}

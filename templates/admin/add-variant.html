@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1>Add a variant for product {{ product.product_name }}</h1>
+
+    <form method="post" action="." enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.as_p }}
+        </div>
+             
+        <div class="form-group">
+            <label for="productImage" class="form-label">Product Image 1</label>
+            <input type="file" class="form-control" id="productImage" name="image1">
+          </div>
+        <div class="form-group">
+           <label for="productImage" class="form-label">Product Image 2</label>
+           <input type="file" class="form-control" id="productImage" name="image2">
+        </div>
+        <div class="form-group">
+            <label for="productImage" class="form-label">Product Image 3</label>
+            <input type="file" class="form-control" id="productImage" name="image3">
+        </div>
+      
+      
+      
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+
+<!-- Include Bootstrap JS -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>
+
+
+
+
+

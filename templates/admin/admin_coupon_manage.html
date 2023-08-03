@@ -1,0 +1,281 @@
+
+{% extends 'admin/admin_layout/admin_main.html' %}
+{% load static %}
+
+{% block title %}
+    Mersa admin
+{% endblock title %}
+ 
+{% block body %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<!-- Add COUPON Modal -->
+<div class="modal fade" id="addCouponModal" tabindex="-1" aria-labelledby="addCouponModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addCouponModalLabel">Add Coupon</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Coupon form -->
+        <form method="POST" action="{% url 'add_coupon' %}">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="couponName" class="form-label">Coupon Name</label>
+            <input type="text" class="form-control" id="couponName" name="coupon_name" required>
+          </div>
+          <div class="mb-3">
+            <label for="couponName" class="form-label">Coupon Code</label>
+            <input type="text" class="form-control" id="couponCode" name="coupon_code" required>
+          </div>
+
+          <div class="form-group">
+            <label for="couponDiscountType">Coupon Discount Type</label>
+            <select class="form-control" id="couponDiscountType" name="coupon_discount_type">
+              <option value="">Select Discount Type</option>
+              {% for dis_type_value , dis_type_label in discount_types %}
+              <option value="{{ dis_type_value}}">{{ dis_type_label}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="couponDescription" class="form-label">Coupon Description</label>
+            <input type="text" class="form-control" id="couponDescription" name="coupon_description" required>
+          </div>
+          
+          <div class="mb-3">
+            <label for="couponDiscount" class="form-label">Coupon Discount</label>
+            <input type="number" class="form-control" id="couponDiscount" name="discount" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="couponStartDate" class="form-label">Start Date</label>
+            <input type="datetime-local" class="form-control" id="couponStartDate" name="start_date" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="couponEndDate" class="form-label">End Date</label>
+            <input type="datetime-local" class="form-control" id="couponEndDate" name="end_date" required>
+          </div>
+
+
+          <div class="form-group">
+            <label for="couponStatus" class="form-label">Status</label>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="couponStatus" name="is_active" value="true" checked>
+              <label class="form-check-label" for="couponStatus">Active</label>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="couponApplicableType" class="form-label">Applicable Type</label>
+            <select class="form-control" id="couponApplicableType" name="applicable_type" required>
+              <option value="all">Category All</option>
+              <option value="category">Category</option>
+            </select>
+          </div>
+
+            <div class="mb-3" id="categoryContainer">
+        <label for="couponCategory" class="form-label">Category</label>
+        <select class="form-control" id="couponCategory" name="category">
+            <option value="">Select Category</option>
+            {% for cat in category %}
+            <option value="{{ cat.id}}">{{cat}}</option>
+            {% endfor %}   
+        </select>
+       </div>
+
+       <div class="mb-3">
+        <label for="couponMinAmount" class="form-label">Minimum Amount</label>
+        <input type="number" step="0.01" class="form-control" id="couponMinAmount" name="min_amount" placeholder="Optional">
+       </div>
+
+          <div class="mb-3" id="maxAmountContainer">
+            <label for="couponMaxAmount" class="form-label">Maximum Amount</label>
+            <input type="number" step="0.01" class="form-control" id="couponMaxAmount" name="max_amount" >
+          </div>
+
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add COUPON Modal end -->
+
+<div class="container-fluid pt-4 px-">
+    <div class="row g-4">
+      <div class="col-sm-12 col-xl-12">
+        <div class="bg-light rounded h-100 p-4">
+          <button type="button" class="btn btn-primary float-end mx-5" data-bs-toggle="modal" data-bs-target="#addCouponModal">
+            Add Coupon
+          </button>
+          <h3 class="mb-4 mt-" style="text-align: center;">Coupon Table</h3>
+          <table class="table table-hover">
+            <thead>
+              <tr> 
+                <th scope="col">Coupon Name</th>
+                <th scope="col">Coupon code</th>
+                <th scope="col">Discount type </th>
+                <th scope="col">Applicable type</th>
+                <th scope="col">Category</th>
+                <th scope="col">Min Purchase</th>
+                <th scope="col">Max Purchase</th>
+                <th scope="col">View</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>   
+              {% for coupon in coupons %}
+              <tr>
+                <td>{{ coupon.name }}</td>
+                <td>{{ coupon.code }}</td>
+                <td>{{ coupon.discount_type }}</td>
+                <td>{{ coupon.applicable_type }}</td>
+                <td>{{ coupon.category }}</td>
+                <td>{{ coupon.min_purchase }}</td>
+                <td>{{ coupon.max_amount }}</td>
+                <td><button type="button" class="btn btn-link rounded-pill edit-button m-2" data-bs-toggle="modal" data-bs-target="#viewcouponModal{{c.id}}">View</button></td>
+
+                <td><button type="button" class="btn btn-link rounded-pill edit-button m-2" data-bs-toggle="modal" data-bs-target="#editCouponModal{{coupon.id}}">Edit</button></td>
+<!-- Edit COUPON Modal -->
+
+<div class="modal fade" id="editCouponModal{{ coupon.id }}" tabindex="-1" aria-labelledby="editCouponModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editCouponModalLabel">Edit Coupon</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Coupon form -->
+        <form method="POST" action="{% url 'edit_coupon' coupon.id %}">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="couponName" class="form-label">Coupon Name</label>
+            <input type="text" class="form-control" id="couponName" name="coupon_name" placeholder="{{ coupon.name }}" required>
+          </div>
+          <div class="mb-3">
+            <label for="couponCode" class="form-label">Coupon Code</label>
+            <input type="text" class="form-control" id="couponCode" name="coupon_code"  placeholder="{{ coupon.code }}" required>
+          </div>
+
+          <div class="form-group">
+            <label for="couponDiscountType">Coupon Discount Type</label>
+            <select class="form-control" id="couponDiscountType" name="coupon_discount_type">
+              <option value="">Select Discount Type</option>
+              {% for dis_type_value , dis_type_label in discount_types %}
+              <option value="{{ dis_type_value }}" {% if coupon.discount_type == dis_type_value %}selected{% endif %}>{{ dis_type_label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="couponDescription" class="form-label">Coupon Description</label>
+            <input type="text" class="form-control" id="couponDescription" name="coupon_description" placeholder="{{ coupon.description }}" required>
+        </div>
+
+          <div class="mb-3">
+            <label for="couponDiscount" class="form-label">Coupon Discount</label>
+            <input type="number" class="form-control" id="couponDiscount" name="discount" placeholder="{{ coupon.discount }}" required>
+        </div>
+
+          <div class="mb-3">
+            <label for="couponStartDate" class="form-label">Start Date</label>
+            <input type="datetime-local" class="form-control" id="couponStartDate" name="start_date" value="{{ coupon.start_date|date:'Y-m-d\TH:i' }}" required>
+        </div>
+
+          <div class="mb-3">
+            <label for="couponEndDate" class="form-label">End Date</label>
+            <input type="datetime-local" class="form-control" id="couponEndDate" name="end_date" value="{{ coupon.end_date|date:'Y-m-d\TH:i' }}" required>
+        </div>
+
+        <div class="form-group">
+          <label for="couponStatus" class="form-label">Status</label>
+          <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="couponStatus" name="is_active" value="true" {% if coupon.is_active %}checked{% endif %}>
+              <label class="form-check-label" for="couponStatus">Active</label>
+          </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="couponApplicableType" class="form-label">Applicable Type</label>
+        <select class="form-control" id="couponApplicableType" name="applicable_type" required>
+            <option value="all" {% if coupon.applicable_type == 'all' %}selected{% endif %}>Category All</option>
+            <option value="category" {% if coupon.applicable_type == 'category' %}selected{% endif %}>Category</option>
+        </select>
+      </div>
+
+      <div class="mb-3" id="categoryContainer">
+        <label for="couponCategory" class="form-label">Category</label>
+        <select class="form-control" id="couponCategory" name="category">
+            <option value="">Select Category</option>
+            {% for cat in category %}
+            <option value="{{ cat.id }}" {% if coupon.category == cat.id %}selected{% endif %}>{{ cat }}</option>
+            {% endfor %}   
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="couponMinAmount" class="form-label">Minimum Amount</label>
+        <input type="number" step="0.01" class="form-control" id="couponMinAmount" name="min_amount" placeholder="{{ coupon.min_amount }}">
+      </div>
+
+      <div class="mb-3" id="maxAmountContainer">
+        <label for="couponMaxAmount" class="form-label">Maximum Amount</label>
+        <input type="number" step="0.01" class="form-control" id="couponMaxAmount" name="max_amount" placeholder="{{ coupon.max_amount }}">
+      </div>
+
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+  </div>
+</div>
+
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Get the select elements and corresponding containers
+    const selectDiscountType = document.getElementById('couponDiscountType');
+    const maxAmountContainer = document.getElementById('maxAmountContainer');
+    const selectApplicableType = document.getElementById('couponApplicableType');
+    const categoryContainer = document.getElementById('categoryContainer');
+
+    // Function to show or hide the maximum amount input
+    function toggleInputs() {
+      if (selectDiscountType.value === 'amount') {
+        maxAmountContainer.style.display = 'none'; // Show the input
+      } else {
+        maxAmountContainer.style.display = 'block'; // Hide the input
+      }
+
+      if (selectApplicableType.value === 'all') {
+        categoryContainer.style.display = 'none'; // Hide the input
+      } else {
+        categoryContainer.style.display = 'block'; // Show the input
+      }
+    }
+
+    // Call the function on page load
+    toggleInputs();
+
+    // Add event listeners to the select elements to handle changes
+    selectDiscountType.addEventListener('change', toggleInputs);
+    selectApplicableType.addEventListener('change', toggleInputs);
+  });
+</script>
+
+
+{% endblock body %}

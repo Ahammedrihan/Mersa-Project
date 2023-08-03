@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verify OTP</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f3f3f3;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 4px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin: 0 0 30px;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        input[type="email"],
+        input[type="text"] {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+            padding: 10px;
+            width: 100%;
+        }
+
+        p {
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        #timer {
+            font-weight: bold;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 4px;
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 12px 20px;
+            text-align: center;
+            text-decoration: none;
+            width: 100%;
+        }
+    </style>
+    <script>
+        function startTimer() {
+            var timerElement = document.getElementById("timer");
+            var duration = 300; // Set the duration in seconds (5 minutes = 300 seconds)
+            var timer = duration;
+
+            var interval = setInterval(function() {
+                var minutes = Math.floor(timer / 60);
+                var seconds = timer % 60;
+
+                // Display the remaining time in the timer element
+                timerElement.textContent = minutes + "m " + seconds + "s";
+
+                // Decrement the timer
+                timer--;
+
+                // Check if the timer has reached 0
+                if (timer < 0) {
+                    clearInterval(interval);
+                    timerElement.textContent = "Time's up!";
+                }
+            }, 1000);
+        }
+
+        // Start the timer when the page loads
+        window.onload = startTimer;
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Verify OTP</h1>
+        <form method="post" action="{% url 'verify_otp' %}">
+            {% csrf_token %}
+            
+            
+            <label for="otp">OTP:</label>
+            <input type="text" name="otp" required><br><br>
+
+            <p>Time remaining: <span id="timer"></span></p>
+            
+            <input type="submit" value="Verify">
+        </form>
+    </div>
+</body>
+</html>

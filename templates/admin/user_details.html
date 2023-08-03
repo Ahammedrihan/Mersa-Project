@@ -1,0 +1,80 @@
+{% extends 'admin/admin_layout/admin_main.html' %}
+{% load static %}
+ 
+{% block title %}User-details{% endblock %}
+
+{% block body%}
+
+         <!-- Table Start -->
+            <div class="container-fluid pt-4 px-">
+                <div class="row g-4">
+                  <div class="col-sm-12 col-xl-12">
+                        <div class="bg-light rounded h-100 p-4">
+                            <h3 class="mb-4 mt-" style="text-align: center;">User-Details Table</h3>
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">User-ID</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Mobile</th>
+                                        <th scope="col">Account Status</th>
+                                        <th scope="col">Account Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>   
+                                {% for d in data  %}
+                                    <tr>
+                                        <th scope="row">{{d.id}}</th>
+                                        <td>{{d.first_name}}</td>
+                                        <td>{{d.email}}</td>
+                                        <td>{{d.phone_number}}</td>
+                                        <td>{% if d.is_active %}Active {% else %}Inactive{% endif %}</td>
+                                     <td>  
+                                        {% if d.is_active %}
+                                            <form action="{% url 'userblock' d.id %}" method="POST">{% csrf_token %}
+                                                 <input type="hidden" name="user_id" value="{{ d.id }}" >
+                                                       {% if not d.is_superuser %}
+                                                     <input type="submit" value="Block" class="btn btn-outline-danger mx-1">
+                                                      {% else %}
+                                                       
+                                                       
+                                                      <span class="badge badge-danger text-dark" style="color: green;">Superuser</span>
+                                                      {% endif %}
+                                            </form>
+                                       {% else %}
+                                            <form action="{% url 'user_unblock' d.id %}" method="POST">
+                                               {% csrf_token %}
+                                               <input type="hidden" name="user_id" value="{{ d.id }}">
+                                               <input type="submit" value="Unblock" class="btn btn-outline-success mx-1">
+                                            </form>
+                                       {% endif %}
+                                  </tr>
+                                {% endfor %}
+                            </td>
+                            </tbody>
+                            </table>
+                        </div>
+                    
+
+                    <div class="pagination justify-content-center ">
+                        <span class="step-links">
+                            {% if data.has_previous %}
+                                <a href="?page=1">&laquo; first</a>
+                                <a href="?page={{ data.previous_page_number }}">previous</a>
+                            {% endif %}
+                    
+                            <span class="current">
+                                Page {{ data.number }} of {{ data.paginator.num_pages }}.
+                            </span>
+                    
+                            {% if orders.has_next %}
+                                <a href="?page={{ data.next_page_number }}">next</a>
+                                <a href="?page={{ data.paginator.num_pages }}">last &raquo;</a>
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                   
+{% endblock body %}
+

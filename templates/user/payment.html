@@ -1,0 +1,90 @@
+{% comment %} 
+<script>
+    // Assign jQuery to a different variable to avoid conflicts
+    var jq = jQuery.noConflict();
+
+    jq(document).ready(function() {
+        jq('.element').fadeIn();
+        jq('.element').fadeOut();
+    });
+
+    jq(function() {
+        paypal.Buttons({
+        style: {
+            layout: 'vertical',
+            color: 'gold',
+            shape: 'rect',
+        },
+        onClick: function(data, actions) {
+            var fname = jq("[name='fname']").val();
+            var lname = jq("[name='lname']").val();
+            var email = jq("[name='email']").val();
+            var phone = jq("[name='phone']").val();
+            var address = jq("[name='address']").val();
+            var city = jq("[name='city']").val();
+            var state = jq("[name='state']").val();
+            var pincode = jq("[name='pincode']").val();
+            var token = jq("[name='csrfmiddlewaretoken']").val();
+
+            if (fname === "" || lname === "" || email === "" || phone === "" || address === "" || city === "" || state === "" || pincode === "") {
+            swal("Alert", "All fields are mandatory!", "error");
+            return false;
+            } else {
+            return true;
+            }
+        },
+        createOrder: function(data, actions) {
+            return actions.order.create({
+            purchase_units: [{
+                amount: {
+                value: '{{ grand_total | stringformat:'d' }}'
+                }
+            }]
+            });
+        },
+        onApprove: function(data, actions) {
+            return actions.order.capture().then(function(orderData) {
+            console.log(details);
+            var fname = jq("[name='fname']").val();
+            var lname = jq("[name='lname']").val();
+            var email = jq("[name='email']").val();
+            var phone = jq("[name='phone']").val();
+            var address = jq("[name='address']").val();
+            var city = jq("[name='city']").val();
+            var state = jq("[name='state']").val();
+            var pincode = jq("[name='pincode']").val();
+            var token = jq("[name='csrfmiddlewaretoken']").val();
+            var paymentMethod = jq("[name='payment_method']").val();
+            var data = {
+                "fname": fname,
+                "lname": lname,
+                "email": email,
+                "phone": phone,
+                "address": address,
+                "city": city,
+                "state": state,
+                "pincode": pincode,
+                "payment_method": paymentMethod,
+                "payment_id": orderData.id,
+                "csrfmiddlewaretoken": token
+            };
+            jq.ajax({
+                method: "POST",
+                url: "/placeorder",
+                data: data,
+                success: function(response) {
+                    swal("Congratulations!", response.status, "success").then((value) => {
+                        window.location.href =response.redirect_url;
+                });
+                }
+            });
+            
+            });
+        },
+        
+        }).render('#paypal-button-container');
+    });
+</script> {% endcomment %}\
+
+
+{% comment %} <script src="https://checkout.razorpay.com/v1/checkout.js"></script> {% endcomment %}

@@ -1,0 +1,500 @@
+
+{% extends 'layouts/main.html' %}
+{% load static %}
+
+
+{% block style %}
+<style>
+	 /* Modal Styles */
+	 .modal {
+		display: none; /* Hide the modal by default */
+		position: fixed;
+		z-index: 1;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		overflow: auto;
+		background-color: rgba(0, 0, 0, 0.5); /* Overlay background */
+	  }
+	
+	  .modal-content {
+		background-color: #fefefe;
+		margin: 15% auto;
+		padding: 20px;
+		border: 1px solid #888;
+		width: 80%;
+		max-width: 400px;
+	  }
+	
+	  .close {
+		color: #aaa;
+		float: right;
+		font-size: 28px;
+		font-weight: bold;
+		cursor: pointer;
+	  }
+	
+	  .close:hover,
+	  .close:focus {
+		color: black;
+		text-decoration: none;
+		cursor: pointer;
+	  }
+
+.pricing .mrp-value {
+text-decoration: line-through;
+color: #ff0000;
+}
+.square-button {
+    border-radius: 20px;
+    /* Add any additional styles as needed */
+}
+
+
+
+.pricing .offer-price-value {
+font-weight: bold;
+color: #6bd65c;
+}
+.pricing .mrp,
+.pricing .offer-price {
+  margin-bottom: 1px; 
+}
+</style>
+
+<style>
+	/* Modal Styles */
+	.modal {
+		display: none;
+		position: fixed;
+		z-index: 1;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, 0.5);
+		justify-content: center;
+		align-items: center;
+	}
+
+	.modal-content {
+		background-color: #fff;
+		padding: 20px;
+		border-radius: 5px;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+		max-width: 400px;
+		width: 80%;
+		text-align: center;
+	}
+
+	.close {
+		color: #aaa;
+		float: right;
+		font-size: 28px;
+		font-weight: bold;
+		cursor: pointer;
+	}
+
+	.close:hover {
+		color: #000;
+	}
+
+	h3 {
+		margin-top: 0;
+	}
+
+	button {
+		padding: 10px 20px;
+		background-color: #007bff;
+		color: #fff;
+		border: none;
+		border-radius: 5px;
+		cursor: pointer;
+		font-size: 16px;
+	}
+
+	button:hover {
+		background-color: #0056b3;
+	}
+	
+</style>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<!-- Add jQuery library -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% endblock style %}
+
+{% block body %}
+
+<!-- Bootstrap CSS -->
+
+
+<section class="ftco-section ftco-cart mt-1" style="background-color:#ffff;">
+
+			<div class="container ">
+				{% if not cart_items %}
+				<h1 class="text-center">Your Cart Is Empty</h1>
+
+				<div class="text-center">
+					<a href="{% url 'shop' %}" class="btn btn-primary">Continue shopping</a>
+				</div>
+
+				{% else %}
+				<div class="row">
+    			<div class="col-md-12 ftco-animate">
+					<h1 class="text-center">Cart Page</h1>
+    				<div class="cart-list">
+						
+	    				<table class="table">
+						    <thead class="thead-primary">
+                                
+						      <tr class="text-center">
+						        
+						        <th>&nbsp;</th>
+						        <th>Product name</th>
+						        <th>Price</th>
+						        <th>Quantity</th>
+						        <th>Total</th>
+								<th>Remove</th>
+						      </tr>
+						    </thead>
+						    <tbody>
+								{% for cart_item in cart_items %}
+						      <tr class="text-center">
+						        
+						        <td class="image-prod"><div class="img" style="background-image:url({{cart_item.variant_image_url}});"></div></td>
+								{% comment %} <img class="img-fluid mx-auto d-block" src="{{ cart_item.variant_image_url }}" alt="img" style="width: 80%; height:;"> {% endcomment %}
+
+						        
+						        <td class="product-name">
+						        	<h3>
+										<span>{{ cart_item.product.product_name }}</span>
+										<span>{{ cart_item.variant.variant_name }}</span>
+									  </h3>
+						        	<p>{{cart_item.variant.variant_description}}</p>
+						        </td>
+						        
+						        <td class="price">
+								<div class="pricing">
+									<p class="mrp">MRP : ₹ <span class="mrp-value">{{cart_item.variant.mrp}}</span></p>
+									<p class="offer-price">Discount : ₹ <span class="offer-price-value">{{cart_item.variant.discount}}</span></p>
+									<p class="offer-price">Offer Price : ₹ <span class="offer-price-value">{{cart_item.variant.offer_price}}</span></p>
+								  </div>
+								</td>
+								<td>
+									<span>
+									<div class="input-group mb-3">
+										<span class="input-group-btn mr-2">
+											<a href="{% url 'remove_cart' cart_item.variant_id %}" type="button" class="quantity-left-minus btn"  style="width: 20px; height: 10px; font-size: 12px;"  data-type="minus" data-field="">
+												<i class="ion-ios-remove"></i>
+											</a>
+										</span>
+										<input type="text" id="quantity" name="quantity" class="form-control input-number" style="width: 45px; height: 10px; font-size: 12px ;" value="{{cart_item.cart_quantity}}" min="1" max="100">
+										<span class="input-group-btn ml-2">
+											<a href="{% url 'plus_cart' cart_item.variant_id %}" type="button" class="quantity-right-plus btn" style="width: 20px; height: 10px; font-size: 12px;" data-type="plus" data-field="">
+												<i class="ion-ios-add"></i>
+											</a>
+										</span>
+									</div>
+								</span>
+								</td>
+						        <td class="total">
+									<span>₹ {{ cart_item.get_subtotal_offer_price}}</span>
+									<br>
+									<span style="font-size: 10px;">₹ {{ cart_item.variant.offer_price }} each</span>
+								</td>
+						        {% comment %} <td class="total"><span>₹ {{cart_item.sub_total}}</span><span> ₹ {{cart_item.offer_price}}each</span></td> {% endcomment %}
+								
+								{% comment %} <td><button type="button" class="btn btn-danger square-button "  data-toggle="modal" data-target="#exampleModal{{cart_item.variant_id}}">Remove</button> {% endcomment %}
+									
+									<td>
+											<a href="{% url 'remove_cart_button' cart_item.variant_id %}" 
+											type="button" 
+											class="btn btn-danger square-button remove-item-button" 
+											data-variant-id="{{ cart_item.variant.id }}"
+											style="width: 80px; height: 30px; font-size: 10px;">Remove</a>
+																					
+									  </td>
+				
+						      </tr><!-- END TR-->
+							  {% endfor %}
+						     
+						    </tbody>
+						  </table>
+					  </div>
+					</div>
+
+<!-- Coupon listing  -->
+
+<div class="col-lg-4 mt-5 cart-wrap ftco-animate">
+    <div class="card">
+        <article class="filter-group">
+            <header class="card-header">
+                <a href="#" data-toggle="collapse" data-target="#collapse_10" aria-expanded="true" class="">
+                    <i class="icon-control fa fa-chevron-down"></i>
+                    <h6 class="title">View All Coupons</h6>
+                </a>
+            </header>
+            <div class="filter-content collapse show" id="collapse_10" style="">
+                <div class="card-body">
+                    <div class="card">
+                        <article class="filter-group">
+							{% for coupon  in coupons  %}
+                            <header class="card-header">
+                                <a href="#" data-toggle="collapse" data-target="#collapse_{{coupon.id}}" aria-expanded="true" class="">
+                                    <i class="icon-control fa fa-chevron-down"></i>
+                                    <h6 class="title">{{coupon.name}}</h6>
+                                </a>
+                            </header>
+                            <div class="filter-content collapse show" id="collapse_{{coupon.id}}" style="">
+                                <div class="card-body">
+                                    <!-- Add coupon details here -->
+                                    <p>Coupon Code: {{coupon.code}}</p>
+                                    <p>Discount:₹ {{coupon.discount}} off</p>
+									<p>Minimum Purchase:₹ {{coupon.min_purchase}}</p>
+                                    <p>Validity: {{coupon.end_date}}</p>
+                                
+                                </div>
+                            </div>
+							{% endfor %}
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+</div>
+
+<!-- Coupon listing end  -->
+
+					<div class="col-lg-4 mt-5 cart-wrap ftco-animate">
+						<div class="cart-total mb-3 text-center">
+							<h3 class="text-center">Coupon</h3>
+								<p>Enter your coupon code if you have one</p>
+								{% if messages %}
+								{% for message in messages %}
+									<div class="alert alert-{{ message.tags }}" role="alert">
+										{{ message }}
+									</div>
+								{% endfor %}
+							{% endif %}
+					<form action="{% url 'apply_coupon'%}" method="post" class="info"> {% csrf_token %}
+						  <div class="form-group">
+							  {% comment %} <label for="coupon"> Enter Coupon Code</label> {% endcomment %}
+							<input type="text" name="coupon-code" class="form-control text-left px-3" placeholder="Enter Coupon Code">
+						</div>
+						
+						<p><button type="submit" class="btn btn-primary text-white py-1 px-3">Apply Coupon</button></p>
+
+					</form>
+					</div>
+				</div>
+					
+						
+
+					  <div class="col-lg-4 mt-5 cart-wrap ftco-animate">
+    				<div class="cart-total mb-3 text-center">
+						<div>
+    					<h3 class="text-center">Cart Totals</h3>
+					
+    					<p class="d-flex pricing">
+    						<span >Subtotal</span>
+    						<span class="mrp-value">₹{{cart.get_total_mrp}}</span>	
+    					</p>
+    					<p class="d-flex">
+    						<span>Discount</span>
+    						<span>- ₹{{cart.get_total_discount_price}}</span>
+    					</p>
+						<p class="d-flex">
+    						<span>Discount</span>
+    						<span>₹{{cart.get_total_offer_price}}</span>
+    					</p>
+						<p class="d-flex">
+    						<span>Shipping Charge</span>
+    						<span>+ ₹{{cart.get_shipping_charge}}</span>
+    					</p>
+
+						{% comment %} {% if self.coupon_is_applied and self.coupon_is_applied.is_valid  %}      
+
+						 <p class="d-flex">
+    						<span>Coupon</span>
+    						<span>- ₹{{cart.calculate_discount}}</span>
+						</p>
+						{% endif %} {% endcomment %}
+							
+							
+    					
+					
+					
+    					<hr>
+    					<p class="d-flex total-price">
+    						<span>Total</span>
+    						<span>₹{{cart.get_total}}</span>
+    					</p>
+					
+    				</div>
+    				<p><a href="{% url 'checkout' %}" class="btn btn-primary py-1 px-3 ">Proceed to Checkout</a></p>
+		
+			
+    			</div>
+    		</div>		
+			 {% endif %}
+		</div>
+		</section>
+		<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<!-- jQuery -->
+<!-- jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+	<script>
+
+
+		<!-- Add SweetAlert library -->
+		<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+		<!-- Add jQuery library -->
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	</script>
+		<script>
+		  // Use jQuery to attach a click event handler to the "Remove" button
+		  $(document).on('click', '.remove-item-button', function(event) {
+			event.preventDefault();
+		
+			const variantId = $(this).data('variant-id');
+		
+			// Show SweetAlert confirmation
+			swal({
+			  title: "Are you sure?",
+			  text: "You want to remove the product from the cart",
+			  icon: "warning",
+			  buttons: true,
+			  dangerMode: true,
+			})
+			.then((willDelete) => {
+			  if (willDelete) {
+				// User confirmed, make AJAX request to remove the item from the cart
+				$.ajax({
+				  url: `/remove_cart_button/${variantId}/`, // Replace with the actual URL
+				  type: 'POST', // Use 'DELETE' if you want to follow RESTful conventions
+				  
+				  success: function(response) {
+					// Handle the successful response here (e.g., update the cart display)
+					// For example, you can reload the cart page after the item is removed
+					window.location.href =/remove_cart_button/;
+				  },
+				  error: function(xhr, textStatus, errorThrown) {
+					console.error('Error occurred:', errorThrown);
+				  }
+				});
+
+
+
+				success: function(response) {
+					// Handle the successful response here (e.g., update the cart display)
+					// Remove the item row from the cart table
+					const cartItemId = response.cart_item_id; // Assuming the response includes the cart item ID
+					const cartItemRow = $(`tr[data-cart-item-id="${cartItemId}"]`);
+					cartItemRow.remove();
+				  },
+
+
+
+			  } else {
+				// User clicked "Cancel" in the SweetAlert, do nothing
+			  }
+			});
+		  });
+		</script>
+
+	<script>
+		$(document).ready(function() {
+			$('.quantity-left-minus').click(function() {
+				var input = $(this).parent().next('input[type="text"]');
+				var value = parseInt(input.val());
+				if (value > 1) {
+					input.val(value - 1);
+				}
+			});
+	
+			$('.quantity-right-plus').click(function() {
+				var input = $(this).parent().prev('input[type="text"]');
+				var value = parseInt(input.val());
+				var max = parseInt(input.attr('max'));
+				if (value < max) {
+					input.val(value + 1);
+				}
+			});
+		});
+
+	</script>
+
+
+	  <script>
+		// JavaScript functions to show/hide modal
+		function openModal() {
+			document.getElementById('myModal').style.display = 'flex';
+		}
+	
+		function closeModal() {
+			document.getElementById('myModal').style.display = 'none';
+		}
+	
+		function removeItem() {
+			// Logic to remove the item
+			// ...
+			// Close the modal after the item is removed
+			
+			closeModal();
+		}
+	</script>
+	
+{% endblock %}
+
+
+<!-- Add the 'onclick' attribute to the Remove button -->
+<a href="{% url 'remove_cart_button' cart_item.variant_id %}" 
+   type="button" 
+   class="btn btn-danger square-button" 
+   style="width: 80px; height: 30px; font-size: 10px;"
+   onclick="showConfirmation(event)">Remove</a>
+
+<!-- SweetAlert library (ensure you have included it) -->
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script>
+    // Function to show the SweetAlert confirmation
+    function showConfirmation(event) {
+        event.preventDefault(); // Prevent the default action of the anchor tag (i.e., navigating to the URL)
+
+        var url = event.target.href; // Get the URL from the anchor tag
+
+        swal({
+            title: "Are you sure?",
+            text: "You want to remove the product from the cart",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                // User confirmed, navigate to the URL
+                window.location.href = url; // Use the URL extracted from the anchor tag
+            } else {
+                // User clicked "Cancel" in the SweetAlert, do nothing or show a message
+                swal("Product was not removed!");
+            }
+        });
+    }
+</script>
+	{% comment %} <a href="{% url 'remove_cart_button' cart_item.variant_id %}" type="button" class="btn btn-danger square-button" data-toggle="modal" data-target="#exampleModal{{cart_item.variant_id}}" style="width: 80px; height: 30px; font-size: 10px;">Remove</a>
+										<a type="button" class="btn btn-link rounded-pill edit-button m-2" href="/product/{{p.id}}/all-variants" >Variants</a> {% endcomment %}
+										{% comment %} <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+											Launch demo modal
+										  </button> {% endcomment %}

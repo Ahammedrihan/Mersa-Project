@@ -1,0 +1,112 @@
+{% extends 'layouts/main.html' %}
+{% load static %}
+
+{% block style %}
+<style>
+.brand-heading {
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  
+  margin-bottom: 20px;
+}
+</style>
+{% endblock style %}
+{% block body %}
+
+    <div class="hero-wrap hero-bread" style="background-image: url({% static 'images/lumwebslider.jpg' %});">
+      <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+          <div class="col-md-9 ftco-animate text-center">
+            <p class="breadcrumbs"><span class="mr-2"><a href="index.html">shop by</a></span> <span>Products</span></p>
+            <h1 class="mb-0 bread">Products</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <section class="ftco-section">
+      <div class="container">
+        <div>
+          <div class="row justify-content-center">
+
+              <h3 class="brand-heading">Products By Brand</h3>
+              
+
+            </div>
+              {% if messages %}
+                  {% for message in messages %}
+                      <div class="alert alert-{{ message.tags }}" role="alert">
+                          {{ message }}
+                      </div>
+                  {% endfor %}
+              {% endif %}
+          </div>
+    
+    {% comment %} <section class="ftco-section">
+      <div class="container">
+        <div class="row justify-content-center">
+          <h3 class="brand-heading">Products By Brand</h3>
+          
+        </div> {% endcomment %}
+    <div class="container">
+      <h6>{{product_count}} items found</h6>
+    
+        <div class="row">
+          {% for product, variant in products_variants.items %}
+          <div class="col-md-6 col-lg-4 ftco-animate">
+            <div class="product">
+              <a href="{% url 'shop_by_product' product.id variant.id  %}" class="img-prod">
+                <div class="card">
+                  <div class="card-body">
+                    <img class="img-fluid mx-auto d-block" src="{{ product.product_image.url }}" alt="img" style="width: 80%; height: 300px;">
+                  </div>
+                </div>
+                <div class="overlay"></div>
+              </a>
+              <div class="text py-3 pb-4 px-3 text-center">
+                <h3><a href="{% url 'shop_by_product' product.id variant.id   %}">{{ product.product_name }}</a></h3>
+                
+                  <h6>Price range starts from</h6>
+                  <p class="price"><span>₹{{ variant.mrp }}</span></p>     
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    
+        <div class="row mt-5 pagination">
+          <div class="col text-center">
+            <div class="block-27">
+              {% if products_variants.has_other_pages %}
+              <ul>
+                {% if products_variants.has_previous %}
+                <li class="page-item active" ><a  href="?page={{products_variants.previous_page_number}}">&lt;</a></li>
+                {% else %}
+                <li class="page-item disabled"><a href="">&lt;</a></li>
+                {% endif %}
+                {% for i in products_variants.paginator.page_range %}
+                   {% if products_variants.number == i  %}
+                      <li class="page-item deactivate"><a class="page-link" href="#">{{i}}</a></li>
+                      {% else %}
+                      <li class="page-item"><a href="?page={{i}}">{{i}}</a></li>
+                   {% endif %}
+                {% endfor %}
+                {% if products_variants.has_next %}
+                  <li class=" page-item active"><a href="?page={{products_variants.next_page_number}}">&gt;</a></li>
+                    {% else %}
+                       <li class=" page-item di"><a href="#">&gt;</a></li>
+                    {% endif %}
+              </ul>
+              {% endif %}
+            </div>
+          </div> 
+
+        </div>
+      </div>
+    </section>
+    
+{% endblock body %}

@@ -1,0 +1,148 @@
+{% extends 'admin/admin_layout/admin_main.html' %}
+{% load static %}
+
+{% block title %}Category-details{% endblock %}
+
+{% block style %}
+<style>
+.edit-button {
+   color: green;
+    }
+</style>
+
+{% endblock style %}
+
+
+
+
+{% block body%}
+<!-- Add Category Modal -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true" >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addCategoryModalLabel">Add Category</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Category form -->
+          <form method="POST" action="{% url 'add_category' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="categoryName" class="form-label">Category Name</label>
+              <input type="text" class="form-control" id="categoryName" name="category_name" required>
+            </div>
+            <div class="form-group">
+              <label for="categoryImage" class="form-label">Category Image</label>
+              <input type="file" class="form-control" id="categoryImage" name="category_image" required>
+            </div>
+
+            <div class="form-group">
+              <label for="categoriestatus" class="form-label">Status</label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="categoryStatus" name="category_status" value="true" checked>
+                <label class="form-check-label" for="categoryStatus">Active</label>
+              </div>
+            </div>
+
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Add</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Table Start -->
+  <div class="container-fluid pt-4 px-">
+    <div class="row g-4">
+      <div class="col-sm-12 col-xl-12">
+        <div class="bg-light rounded h-100 p-4">
+          <button type="button" class="btn btn-primary  float-end mx-5" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+            Add Category
+          </button>
+          <h3 class="mb-4 mt-" style="text-align: center;">Category Table</h3>
+          <table class="table table-hover">
+            <thead>
+              <tr> 
+                <th scope="col">Cat-ID</th>
+                <th scope="col">Category Name</th>
+                <th scope="col">Category Image</th>
+                <th scope="col">Category status</th>
+                <th scope="col">Account Actions</th>
+                
+              </tr>
+            </thead>
+            <tbody>   
+              {% for c in category %}
+              <tr>
+                <td scope="row">{{ c.id }}</td>
+                <td>{{ c.category_name }}</td>
+             {% if c.category_image %}
+                <td class="align-middle"><img src="{{ c.category_image.url }}" alt="{{ c.category_name }}" width="50px" height="50px"></td>
+              {% else %}
+                <td class="align-middle"><img src="{% static 'default/download.png' %}" alt="Default Image" width="50px" height="50px"></td>
+              {% endif %}
+                <td> {% if c.category_status %} Active {% else %} Inactive {% endif %} </td>
+                <td><button type="button" class="btn btn-link rounded-pill edit-button m-2" data-bs-toggle="modal" data-bs-target="#editcategoryModal{{c.id}}">Edit</button><td>
+
+<!-- edit Category Modal -->
+<div class="modal fade" id="editcategoryModal{{c.id}}" tabindex="-1" aria-labelledby="editcategoryModalLabel" aria-hidden="true" >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addCategoryModalLabel">Edit Category</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Category form -->
+          <form method="POST" action="{% url 'edit_category' c.id %} "enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="categoryName" class="form-label">Category Name</label>
+              <input type="text" class="form-control" id="categoryName" placeholder="{{c.category_name}}" name="editcategory_name" required>
+            </div>
+
+
+            <div class="form-group">
+              <label for="existingImage" class="form-label">Existing Image</label>
+              <img src="{{ c.category_image.url }}" alt="{{ c.category_name }}" width="50px" height="50px">
+              </div>  
+
+                 <!-- Change Image -->
+                 <div class="form-group">
+                  <label for="categoryImage" class="form-label">New Image</label>
+                  <input type="file" class="form-control" id="categoryImage" name="editcategory_image" required>
+                </div>
+
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="categoryStatus" name="editcategory_status" {% if c.category_status %}checked{% endif %}>
+                  <label class="form-check-label" for="categoryStatus">
+                    Active
+                  </label>
+                </div> 
+
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Add</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+{% endblock body %}
+
+
+
+  
+ 

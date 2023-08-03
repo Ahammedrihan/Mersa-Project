@@ -1,0 +1,501 @@
+<div class="container">
+    <!--Modal for poup-->
+    {% if critical_stock %}
+    <div class="modal fade" id="adminpopupModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Hi,{{ request.user.name }}</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h4 class="text-danger mt-3 mb-3">These Products are critical in stock !!!</h4>
+                    {% for product in critical_stock %}
+                    <div class="d-flex align-items-center justify-content-between mt-3">
+                        <h5>{{ product.productname }}(Qty):</h5> <h3 class="text-danger"><b>{{ product.quantity }}</b></h3>
+                        <a href="/notify_vendor/{{ product.vendor_id }},{{ product.id }},
+                           {{ product.productname }}" class="btn btn-warning">Notify Vendor</a>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <!-- modal ends here-->
+    <nav class="mt-2">
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <button class="nav-link active" id="nav-revenue-tab" data-bs-toggle="tab" data-bs-target="#revenue_section" type="button" role="tab" aria-controls="nav-Revenue" aria-selected="true"><b>Revenue</b></button>
+            <button class="nav-link" id="nav-orders-tab" data-bs-toggle="tab" data-bs-target="#orders_section" type="button" role="tab" aria-controls="nav-orders" aria-selected="false"><b>Orders</b></button>
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="revenue_section" role="tabpanel" aria-labelledby="nav-revenue-tab" tabindex="0">
+            <div class="row mt-3">
+                <div class="col-xl-4 col-md-6">
+                    <div class="card bg-warning text-white mb-4">
+                        <div class="card-body">
+                            <h5>Today:({{ today_date }})</h5>
+                            <h1>₹{{ daily_total_revenue }}</h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-md-6">
+                    <div class="card bg-success text-white mb-4">
+                        <div class="card-body">
+                            <h5>Week:({{ week_start_date }} - {{ week_end_date }})</h5>
+                            <h1>₹{{ weekly_total_revenue }}</h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-md-6">
+                    <div class="card bg-primary text-white mb-4">
+                        <div class="card-body">
+                            <h5>Month:({{ month_start_date }} - {{ month_end_date }})</h5>
+                            <h1>₹{{ monthly_total_revenue }}</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="col-xl-12 me-1">
+                    <div class="card mb-4">
+                        <div class="card-header d-flex justify-content-between">
+                            <div>
+                                <i class="fas fa-chart-bar me-1"></i>
+                                Weekly Revenue({{ week_start_date }}-{{ week_end_date }})
+                            </div>
+                            <div>
+                                ₹{{ weekly_total_revenue }}
+                            </div>
+                        </div>
+                        <div class="card-body"><canvas id="weeklyRevenueChart" width="100" height="40"></canvas></div>
+                    </div>
+                </div>
+                <div class="col-xl-12 ms-1 ">
+                    <div class="card mb-4">
+                        <div class="card-header d-flex justify-content-between">
+                            <div>
+                                <i class="fas fa-chart-bar me-1"></i>
+                                Monthly Revenue({{ month_start_date }}-{{ month_end_date }})
+                            </div>
+                            <div>
+                                ₹{{ monthly_total_revenue }}
+                            </div>
+
+                        </div>
+                        <div class="card-body"><canvas id="monthlyRevenueChart" width="100" height="40"></canvas></div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                $(document).ready(function () {
+                    $('#adminpopupModal').modal('show');
+                });
+            </script>
+            <script>
+                 var ctx = document.getElementById('weeklyRevenueChart').getContext('2d');
+                var myChart = new Chart(ctx, {
+                  type: 'bar',
+                  data: {
+                        labels: {{ week_revenue_date | safe }},
+                    datasets: [{
+                      label: 'Weekly Revenue(INR) ₹',
+                        data: {{ week_revenue_data | safe }},
+                        backgroundColor: 'rgba(25, 135, 84)',
+                        borderColor: 'rgba(25, 135, 84)',
+                      borderWidth: 1
+                    }]
+                  },
+                  options: {
+                    scales: {
+                      y: {
+                        beginAtZero: true
+                      }
+                    }
+                  }
+                });
+            </script>
+            <script>
+            var ctx = document.getElementById('monthlyRevenueChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                    labels: {{ month_revenue_date | safe }},
+                datasets: [{
+                  label: 'Monthly Revenue(INR) ₹',
+                    data: {{ month_revenue_data | safe }},
+                    backgroundColor: 'rgba(13, 110, 253)',
+                    borderColor: 'rgba(13, 110, 253)',
+                  borderWidth: 1
+                }]
+              },
+              options: {
+                scales: {
+                  y: {
+                    beginAtZero: true
+                  }
+                }
+              }
+            });
+            </script>
+            <nav class="mt-2">
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    <button class="nav-link active" id="nav-today-tab" data-bs-toggle="tab" data-bs-target="#today_section" type="button" role="tab" aria-controls="nav-today" aria-selected="true"><b>Today</b></button>
+                    <button class="nav-link" id="nav-week-tab" data-bs-toggle="tab" data-bs-target="#week_section" type="button" role="tab" aria-controls="nav-week" aria-selected="false"><b>Week</b></button>
+                    <button class="nav-link" id="nav-month-tab" data-bs-toggle="tab" data-bs-target="#month_section" type="button" role="tab" aria-controls="nav-month" aria-selected="false"><b>Month</b></button>
+                </div>
+            </nav>
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="today_section" role="tabpanel" aria-labelledby="nav-today-tab" tabindex="0">
+                    {% if daily_revenue %}
+                    <div class="d-flex align-items-start justify-content-around">
+                        <table class="table mt-3">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Product</th>
+                                    <th>Revenue</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for revenue in daily_revenue %}
+                                <tr>
+                                    <td><b>{{ today_date }}</b></td>
+                                    <td>{{ revenue.product_name }}</td>
+                                    <td><b>₹{{ revenue.total_revenue }}</b></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="col-lg-6">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <i class="fas fa-chart-pie me-1"></i>
+                                    Prouctwise Revenue({{ today_date }})
+                                </div>
+                                <div class="card-body"><canvas id="daily_revenuePieChart" width="50" height="40"></canvas></div>
+                            </div>
+                        </div>
+                        <script>
+                            var ctx = document.getElementById("daily_revenuePieChart");
+                            var myPieChart = new Chart(ctx, {
+                              type: 'pie',
+                              data: {
+                                labels: {{ products | safe }},
+                                datasets: [{
+                                  data: {{ product_daily_revenue | safe }},
+                                  backgroundColor: {{ product_color | safe }},
+                                }],
+                              },
+                            });
+                        </script>
+                    </div>
+                    {% else %}
+                    <h3>NO RECORDS FOR CURRENT FIELD!!!</h3>
+                    {% endif %}
+                </div>
+                <div class="tab-pane fade" id="week_section" role="tabpanel" aria-labelledby="nav-week-tab" tabindex="0">
+                    <div class="d-flex align-items-start justify-content-around">
+                        <table class="table mt-3">
+                            <thead>
+                                <tr>
+                                    <th>Week</th>
+                                    <th>Product</th>
+                                    <th>Revenue</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for revenue in weekly_revenue %}
+                                <tr>
+                                    <td><b>{{ week_start_date }}-{{ week_end_date }}</b></td>
+                                    <td>{{ revenue.product_name }}</td>
+                                    <td><b>₹{{ revenue.total_revenue }}</b></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="col-lg-6">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <i class="fas fa-chart-pie me-1"></i>
+                                    Prouctwise Revenue({{ week_start_date }}-{{ week_end_date }})
+                                </div>
+                                <div class="card-body"><canvas id="weekly_revenuePieChart" width="50" height="40"></canvas></div>
+                            </div>
+                        </div>
+                        <script>
+                            var ctx = document.getElementById("weekly_revenuePieChart");
+                            var myPieChart = new Chart(ctx, {
+                              type: 'pie',
+                              data: {
+                                labels:  {{ products | safe }},
+                                datasets: [{
+                                  data: {{ product_weekly_revenue | safe }},
+                                  backgroundColor:{{ product_color | safe }},
+                                }],
+                              },
+                            });
+                        </script>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="month_section" role="tabpanel" aria-labelledby="nav-month-tab" tabindex="0">
+                    <div class="d-flex align-items-start justify-content-around">
+                        <table class="table  mt-3">
+                            <thead>
+                                <tr>
+                                    <th>Month</th>
+                                    <th>Product</th>
+                                    <th>Revenue</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for revenue in monthly_revenue %}
+                                <tr>
+                                    <td><b>{{ month_start_date }}-{{ month_end_date }}</b></td>
+                                    <td>{{ revenue.product_name }}</td>
+                                    <td><b>₹{{ revenue.total_revenue }}</b></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="col-lg-6">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <i class="fas fa-chart-pie me-1"></i>
+                                    Prouctwise Revenue({{ month_start_date }}-{{ month_end_date }})
+                                </div>
+                                <div class="card-body"><canvas id="monthly_revenuePieChart" width="50" height="40"></canvas></div>
+                            </div>
+                        </div>
+                        <script>
+                            var ctx = document.getElementById("monthly_revenuePieChart");
+                            var myPieChart = new Chart(ctx, {
+                              type: 'pie',
+                              data: {
+                                labels:  {{ products | safe }},
+                                datasets: [{
+                                  data: {{ product_monthly_revenue | safe }},
+                                  backgroundColor: {{ product_color | safe }},
+                                }],
+                              },
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--orders section starts here_______________________________________________________________________________________ -->
+        <div class="tab-pane fade" id="orders_section" role="tabpanel" aria-labelledby="nav-orders-tab" tabindex="0">
+            <div class="row mt-3">
+                <div class="col-xl-4 col-md-6">
+                    <div class="card bg-warning text-white mb-4">
+                        <div class="card-body">
+                            <h5>Today:({{ today_date }})</h5>
+                            <h1>Count:{{ today_orders_count }}</h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-md-6">
+                    <div class="card bg-success text-white mb-4">
+                        <div class="card-body">
+                            <h5>Week:({{ week_start_date }} - {{ week_end_date }})</h5>
+                            <h1>Count:{{ week_orders_count }}</h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-md-6">
+                    <div class="card bg-primary text-white mb-4">
+                        <div class="card-body">
+                            <h5>Month:({{ month_start_date }} - {{ month_end_date }})</h5>
+                            <h1>Count:{{ month_orders_count }}</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="col-xl-12 me-1">
+                    <div class="card mb-4">
+                        <div class="card-header d-flex justify-content-between">
+                            <div>
+                                <i class="fas fa-chart-bar me-1"></i>
+                                Weekly Orders({{ week_start_date }}-{{ week_end_date }})
+                            </div>
+                        </div>
+                        <div class="card-body"><canvas id="weeklyOrdersChart" width="100" height="40"></canvas></div>
+                    </div>
+                </div>
+                <div class="col-xl-12 ms-1 ">
+                    <div class="card mb-4">
+                        <div class="card-header d-flex justify-content-between">
+                            <div>
+                                <i class="fas fa-chart-bar me-1"></i>
+                                Monthly Orders({{ month_start_date }}-{{ month_end_date }})
+                            </div>
+
+                        </div>
+                        <div class="card-body"><canvas id="monthlyOrdersChart" width="100" height="40"></canvas></div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                var ctx = document.getElementById('weeklyOrdersChart').getContext('2d');
+                var myChart = new Chart(ctx, {
+                  type: 'bar',
+                  data: {
+                        labels: {{ week_order_date | safe }},
+                    datasets: [{
+                      label: 'Weekly Orders',
+                        data: {{ week_order_data | safe }},
+                        backgroundColor: 'rgba(25, 135, 84)',
+                        borderColor: 'rgba(25, 135, 84)',
+                      borderWidth: 1
+                    }]
+                  },
+                  options: {
+                    scales: {
+                      y: {
+                        beginAtZero: true
+                      }
+                    }
+                  }
+                });
+            </script>
+            <script>
+                $(document).ready(function () {
+                    $('#adminpopupModal').modal('show');
+                });
+            </script>
+            <script>
+                var ctx = document.getElementById('monthlyOrdersChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                    labels: {{ month_order_date | safe }},
+                datasets: [{
+                  label: 'Monthly Orders',
+                    data: {{ month_order_data | safe }},
+                    backgroundColor: 'rgba(13, 110, 253)',
+                    borderColor: 'rgba(13, 110, 253)',
+                  borderWidth: 1
+                }]
+              },
+              options: {
+                scales: {
+                  y: {
+                    beginAtZero: true
+                  }
+                }
+              }
+            });
+            </script>
+            <h4 class="mt-5"><u>Today order's List <b>({{ today_date }})</b></u></h4>
+            <table class="table mt-4">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <!--<th>Product ID</th>-->
+                        <th>Product Name</th>
+                        <!--<th>User ID</th>
+                        <th>Address ID</th>-->
+                        <th>Quantity</th>
+                        <th>Amount</th>
+                        <th>Vendor_id</th>
+                        <th>Payment Type</th>
+                        <th>Payment Status</th>
+                        <th>Order Status</th>
+                        <th>Date and Time</th>
+                        <th>Cancel</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in s %}
+                    <tr>
+                        <td><a href="/adminvieworder/{{ i.id }}">{{ i.id }}</a></td>
+                        <!-- <td>{{ i.product_id }}</td>-->
+                        <td>{{ i.product_name }}</td>
+                        <!--<td>{{ i.user_id }}</td>
+                        <td>{{ i.address_id }}</td>-->
+                        <td>{{ i.quantity }}</td>
+                        <td>{{ i.amount }}</td>
+                        <td>{{ i.vendor_id }}</td>
+                        <td>{{ i.payment_type }}</td>
+                        <td>{{ i.payment_status }}</td>
+                        <td>{{ i.order_status }}</td>
+                        <td>{{ i.date_and_time }}</td>
+                        <td>
+                            {% if i.order_status == 'Canceled' %}
+                            <button class="btn btn-outline-danger" disabled>Canceled</button>
+                            {% elif i.order_status == 'Deliverd'%}
+                            <button class="btn btn btn-outline-success" disabled>Deliverd</button>
+                            {% elif i.order_status == 'Order Closed'%}
+                            <button class="btn btn btn-outline-dark" disabled>Order Closed</button>
+                            {% else %}
+                            <a class="btn btn-danger" href="/admin_cancel_order/{{ i.id }}">Cancel</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div class="col-sm-6 col-xl-3">
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h5 class="card-title">Daily Report</h5>
+                    <small class="text-muted">Some Subtitle or Description</small>
+                </div>
+                <i class="fa fa-chart-line fa-3x text-primary"></i>
+            </div>
+            <div class="bg-light rounded p-4 mt-3">
+                <p class="mb-2">Today Sale</p>
+                <h6 class="mb-0">{{ daily_total_revenue }}</h6>
+            </div>
+            <div class="mt-3">
+                <small class="text-muted">Today's Orders Recived</small><span>: {{per_day_total_order_count}}</span>
+                <small class="text-muted">Total Products sold</small><span>: {{per_day_total_order_count}}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="col-sm-6 col-xl-3">
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h5 class="card-title">Daily Report</h5>
+                    <small class="text-muted">Some Subtitle or Description</small>
+                </div>
+                
+            </div>
+            <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+            <i class="fa fa-chart-line fa-3x text-primary"></i>
+            <div class="bg-light rounded p-4 mt-3">
+                <p class="mb-2">Today Sale</p>
+                <h6 class="mb-0">{{ daily_total_revenue }}</h6>
+            </div>
+        </div>
+            <div class="mt-3">
+                <small class="text-muted">Today's Orders Recived</small><span>: {{per_day_total_order_count}}</span>
+                <small class="text-muted">Total Products sold</small><span>: {{per_day_total_order_count}}</span>
+            </div>
+        </div>
+    </div>
+</div>

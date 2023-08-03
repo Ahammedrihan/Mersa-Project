@@ -1,0 +1,239 @@
+{% extends 'admin/admin_layout/admin_main.html' %}
+
+{% load static %}
+{% block title %}Product-details{% endblock %}
+{% block style %}
+<style>
+.edit-button {
+   color: green;
+    }
+</style>
+{% endblock style %}
+
+
+{% block body%}
+ <!-- ----------------------------------ADD NEW PRODUCT MODAL------------------------------------- -->
+ 
+ <div class="modal fade" id="addproductmodal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Product form -->
+        <form method="post" action="{% url 'add_product' %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="productName" class="form-label">Product Name</label>
+            <input type="text" class="form-control" id="productName" name="product_name" required>
+          </div>
+          <div class="form-group">
+            <label for="productbrand">Brand:</label>
+            <select class="form-control" id="productbrand" name="product_brand" required>
+              <option value="">Select brand</option>
+              {% for brand in brands %}
+              <option value="{{ brand.id }}">{{ brand.brand_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="category">Category:</label>
+            <select class="form-control" id="category" name="product_category" required>
+              <option value="">Select category</option>
+              {% for category in categorys %}
+              <option value="{{ category.id }}">{{ category.category_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="productDescription" class="form-label">Product Description</label>
+            <textarea class="form-control" id="productDescription" name="product_description" rows="4" required></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label for="productStatus" class="form-label">Status</label>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" id="productStatusActive" name="product_status" value="true" checked>
+              <label class="form-check-label" for="productStatusActive">Active</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" id="productStatusInactive" name="product_status" value="false">
+              <label class="form-check-label" for="productStatusInactive">Inactive</label>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="productImage" class="form-label">Product Image</label>
+            <input type="file" class="form-control" id="productImage" name="product_image" required>
+          </div>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Product Table -->
+  <div class="container-fluid pt-4 px-">
+    <div class="row g-4">
+      <div class="col-sm-12 col-xl-12">
+        <div class="bg-light rounded h-100 p-4">
+          <button type="button" class="btn btn-primary float-end mx-5" data-bs-toggle="modal" data-bs-target="#addproductmodal">
+            Add Product
+          </button>
+          <h3 class="mb-4 mt-" style="text-align: center;">Product Table</h3>
+          <table class="table table-hover">
+            <thead>
+              <tr> 
+                <th scope="col">ID</th>
+                <th scope="col">Product </th>
+                <th scope="col">Brand </th>
+                <th scope="col">Category</th>
+                <th scope="col">Image</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
+                <th scope="col">Variants</th>
+
+              </tr>
+            </thead>
+            <tbody>   
+              {% for p in product %}
+                <tr>
+                  <td scope="row">{{ p.id }}</td>
+                  <td>{{ p.product_name }}</td>
+                  <td>{{ p.product_brand }}</td>
+                  <td>{{ p.product_category }}</td>
+                   {% if p.product_image %}
+                  <td class="align-middle"><img src="{{ p.product_image.url }}" alt="{{ p.product_name }}" width="50px" height="50px"></td>
+                {% else %}
+                  <td class="align-middle"><img src="{% static 'default/download.png' %}" alt="Default Image" width="50px" height="50px"></td>
+                {% endif %}
+               
+                  <td>
+                    {% if p.product_status %}
+                    Active
+                    {% else %}
+                    InActive
+                    {% endif %}
+                  </td>
+                  <td>
+                    <button type="button" class="btn btn-link rounded-pill edit-button m-2" data-bs-toggle="modal" data-bs-target="#editproductmodal{{ p.id }}">Edit</button>
+                  </td>
+                  <td>
+                    <a type="button" class="btn btn-link rounded-pill edit-button m-2" href="/product/{{p.id}}/all-variants" >Variants</a>
+                  </td>
+   <!-- ------------------------------------EDIT PRODUCT MODAL---------------------------------------------------------- -->
+
+
+                   <div class="modal fade" id="editproductmodal{{ p.id }}" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="editProductModalLabel">Edit Product</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <!-- Product form -->
+                          <form method="post" action="{% url 'edit_product' p.id %}" enctype="multipart/form-data">
+
+                            {% csrf_token %}
+                               
+                            <div class="form-group">
+                              <label for="productbrand">Product</label>
+                              <input type="text" class="form-control" id="productName" placeholder="{{ p.product_name }}" name="product_name" required>
+                          </div> 
+                           
+
+                                {% comment %} <select class="form-control" id="productname" name="product_name">
+                                  <option value="{{p.id}}">{{ p.product_name }}</option>
+                                  {% for pro in product  %}
+                                  
+                                  <option value="{{pro.id}}">{{ pro.product_name }}</option>
+                                  {% endfor product %}
+                                </select> 
+                              </div> {% endcomment %}
+
+                      
+                             <div class="form-group">
+                              <label for="productbrand">Brand:</label>
+                              <select class="form-control" id="productbrand" name="product_brand">
+                                
+                              
+                                <option value="{{p.id}}">{{ p.product_brand }}</option>
+                                {% for brand in brands %}
+                                <option value="{{brand.id}}">{{brand.brand_name  }}</option>
+                                {% endfor brands %}
+                              </select>
+                            </div>
+                          
+                           
+                            <div class="form-group">
+                              <label for="category">Category:</label>
+                              <select class="form-control" id="category2" name="product_category">
+                                
+                                <option value="{{p.id}}">{{ p.product_category }}</option>
+                                {% for category in categorys %}
+                                <option value="{{category.id}}">{{ category.category_name}}</option>
+                                {% endfor categorys %}
+                              </select>
+                            </div>
+                            
+                            
+                            <div class="form-group">
+                              <label for="productDescription" class="form-label">Product Description</label>
+                              <textarea class="form-control" id="productDescription" name="product_description" rows="4" required>{{p.product_description}}</textarea>
+                            </div>
+
+                            <div class="form-group">
+                              <label for="productStatus" class="form-label">Status</label>
+                              <div class="form-check">
+                                <input class="form-check-input" type="radio" id="productStatusActive" name="product_status" value="true" checked>
+                                <label class="form-check-label" for="productStatusActive">Active</label>
+                              </div>
+                              <div class="form-check">
+                                <input class="form-check-input" type="radio" id="productStatusInactive" name="product_status" value="false">
+                                <label class="form-check-label" for="productStatusInactive">Inactive</label>
+                              </div>
+                            </div> 
+                              <!-- Existing Image -->
+                           {% comment %} <div class="form-group">
+                          <label for="existingImage" class="form-label">Existing Image</label>
+                          <img src="{{ p.product_image.url }}" alt="{{ p.product_name }}" width="50px" height="50px">
+                          </div> {% endcomment %}
+
+                             <!-- Change Image -->
+                           <div class="form-group">
+                              <label for="productImage" class="form-label">Product Image</label>
+                              <input type="file" class="form-control" id="productImage" name="product_image">
+                            </div>
+
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Update</button>
+                          </form> 
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+
+ 
+
+{% comment %} 
+<div class="form-group">
+  <label for="productVariant" class="form-label">Product Variant</label>
+  <select class="form-control" id="productVariant" name="product_variant" required disabled>
+    <option value="">Select variant</option>
+  </select>
+</div> {% endcomment %}

@@ -1,0 +1,528 @@
+{% extends 'admin/admin_layout/admin_main.html' %}
+{% load static %}
+
+{% block title %}Users Order-details{% endblock %}
+
+{% block body %}
+{% comment %} 
+<div class="container-fluid pt-4 px-">
+    <div class="row g-4">
+      <div class="col-sm-12 col-xl-12">
+        <div class="bg-light rounded h-100 p-4">
+          <h3 class="mb-4 mt-" style="text-align: center;">Variant Table</h3>
+          <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Order_id</th>
+                    <th>User</th>
+                    <th>Product</th>
+                    <th>Sizes</th>
+                    <th>Price</th>
+                    <th>Qty</th>
+                    <th>Total</th>
+                    <th>Pay_mthd</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>   
+            </thead>
+            <tbody>
+                {% for o in orders %}
+                {% for order_item in order_items  %}
+                  {% if order_item.order_no == o %}
+                <tr>
+                  <td>{{ o.order_number }}</td>
+                  <td>
+                      <div>
+                        <p >{{ o.email }}</p>
+                      </div>
+                    </div>
+                  </td>     
+                  <td>   
+                    <div class="d-flex align-items-center">
+                      <img
+                        src="{{ order_item.product.product_image.url }}"
+                        alt=""
+                        style="width: 45px; height: 45px"
+                        class="rounded-circle border border-success"
+                      />
+                      <div class="ms-3">
+                        <p class="fw-bold mb-1">{{ order_item.product.product_name }}</p>
+                        <p class="fw-bold mb-1">{{ order_item.varaiant.variant_name }}</p>
+                       
+                      </div>
+                    </div>
+                  </td>
+                  
+                  <td>
+                    <p class="fw-bold mb-1">{{ order_item.varaiant.variant_name }}</p>
+                  </td>
+                  <td>
+                    <p class="fw-bold mb-1">₹{{ order_item.amount }}</p>
+                  </td>
+                  <td>
+                    <p class="fw-bold mb-1">{{ order_item.quantity }}</p>
+                  </td>
+                  <td>
+                    <p class="fw-bold mb-1">₹{{ o.order_total_amount }}</p>
+                  </td>
+                  <td>
+                    <p class="fw-bold mb-1">{{ o.payment_mode}}</p>
+                  </td>
+                
+                  <td>
+                    <div class="badge badge-success rounded-pill d-inline text-danger">{{ o.order_status }}<br></div><br>
+                  </td>
+                  <td>
+                    <button type="button" class="btn btn-danger edit-button mt-1" data-toggle="modal" data-target="#editModal{{ o.id }}"><i class="fas fa-edit"></i></button> 
+                  </td> 
+                
+                </tr>
+                {% endif %}
+                {% endfor %}
+                  {% endfor %}
+                </tbody>
+              </table>
+        </div>
+    </div>
+</div>
+
+{% for o in orders %}
+  <div class="modal fade" id="editModal{{ o.id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{ o.id }}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModalLabel{{ o.id }}">Edit Order Status</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="{% url 'change_order_status' %}" method="post">
+            {% csrf_token %}
+            {% for order_item in order_items %}
+              {% if order_item.order_no == o %}
+                <div class="form-group">
+                  <label for="orderStatus{{ order_item.id }}">Order Status</label>
+                  <select class="form-control" id="orderStatus{{ order_item.id }}" name="order_status">
+                    {% for choice in choices %}
+                      <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                    {% endfor %}
+                  </select>
+                  <input type="text" name="order_item_id" value="{{ order_item.id }}">
+                  <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endfor %}
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjd04D2kBIFXQpeoTz1HIcje39wm4jDKdf19U8g14ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const statusButtons = document.querySelectorAll('.edit-button');
+    statusButtons.forEach(button => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        const orderId = button.dataset.orderId;
+        openModal(orderId);
+      });
+    });
+  });
+
+  function openModal(orderId) {
+    const modalId = `editModal${orderId}`;
+    document.getElementById('orderdetails').value = orderId;
+    const modal = new bootstrap.Modal(document.getElementById(modalId)); // Initialize the modal
+    modal.show();
+  }
+</script>
+
+{% endblock body %}
+
+
+
+
+
+{% extends 'admin/admin_layout/admin_main.html' %}
+{% load static %}
+
+{% block title %}Users Order-details{% endblock %}
+
+{% block body %}
+<div class="container-fluid pt-4 px-">
+  <div class="row g-4">
+    <div class="col-sm-12 col-xl-12">
+      <div class="bg-light rounded h-100 p-4">
+        <h3 class="mb-4 mt-" style="text-align: center;">Orders</h3>
+        <table class="table table-hover">
+          <thead>
+              <tr>
+                  <th>Order_id</th>
+                  <th>User</th>
+                  <th>Price</th>
+                  <th>Qnt Of Order</th>
+                  <th>Total</th>
+                  <th>Pay_mthd</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>   
+          </thead>
+          <tbody>
+              {% for o in orders %}
+              
+              <tr>
+                <td>{{ o.order_number }}</td>
+                <td><p >{{ o.email }}</p></td>   
+                <td>  <button type="button" class="btn btn-danger edit-button mt-1" data-toggle="modal" data-target="#editModal{{ o.id }}"><i class="fas fa-edit"></i></button> </td> 
+              
+   
+                <td>{{o.get_total_discount_price}} </td>
+                <td><p class="fw-bold mb-1">{{ o.get_total_count}}</p></td>
+                <td><p class="fw-bold mb-1">₹{{ ord.order_total_amount }}</p> </td>
+                <td><p class="fw-bold mb-1">{{ o.order_status}}</p> </td>
+                <td><div class="badge badge-success rounded-pill d-inline text-danger">{{ o.order_created_date}}<br></div><br></td>
+                <td>
+                  <button type="button" class="btn btn-danger edit-button mt-1" data-toggle="modal" data-target="#editModal{{ o.id }}"><i class="fas fa-edit"></i></button> 
+                </td> 
+              
+              </tr>
+            
+                {% endfor %}
+              </tbody>
+            </table>
+      </div>
+  </div>
+</div>
+
+{% for o in orders %}
+<div class="modal fade" id="editModal{{ o.id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{ o.id }}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalLabel{{ o.id }}">Edit Order Status</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'change_order_status' %}" method="post">
+          {% csrf_token %}
+          {% for order_item in order_items %}
+            {% if order_item.order_no == o %}
+              <div class="form-group">
+                <label for="orderStatus{{ order_item.id }}">Order Status</label>
+                <select class="form-control" id="orderStatus{{ order_item.id }}" name="order_status">
+                  {% for choice in choices %}
+                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                  {% endfor %}
+                </select>
+                <input type="text" name="order_item_id" value="{{ order_item.id }}">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="modal fade" id="editModal{{ o.id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{ o.id }}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalLabel{{ o.id }}">Edit Order Status</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'change_order_status' %}" method="post">
+          {% csrf_token %}
+          {% for order_item in order_items %}
+            {% if order_item.order_no == o %}
+              <div class="form-group">
+                <label for="orderStatus{{ order_item.id }}">Order Status</label>
+                <select class="form-control" id="orderStatus{{ order_item.id }}" name="order_status">
+                  {% for choice in choices %}
+                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                  {% endfor %}
+                </select>
+                <input type="text" name="order_item_id" value="{{ order_item.id }}">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjd04D2kBIFXQpeoTz1HIcje39wm4jDKdf19U8g14ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const statusButtons = document.querySelectorAll('.edit-button');
+  statusButtons.forEach(button => {
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      const orderId = button.dataset.orderId;
+      openModal(orderId);
+    });
+  });
+});
+
+function openModal(orderId) {
+  const modalId = `editModal${orderId}`;
+  document.getElementById('orderdetails').value = orderId;
+  const modal = new bootstrap.Modal(document.getElementById(modalId)); // Initialize the modal
+  modal.show();
+}
+</script>
+
+
+{% endblock body %} {% endcomment %}
+<div class="container-fluid pt-4 px-">
+  <div class="row g-4">
+    <div class="col-sm-12 col-xl-12">
+      <div class="bg-light rounded h-100 p-4">
+        <h3 class="mb-4 mt-" style="text-align: center;">Orders</h3>
+        <table class="table table-hover">
+          <h6>Total No Order's {{order_count}}</h6>
+          <thead>
+              <tr>
+                  <th>Order_id</th>
+                  <th>User</th>
+                  <th>Price</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                  <th>View</th>
+                </tr>   
+          </thead>
+          <tbody>
+              {% for o in orders %}
+            
+          <tr>
+                <td>{{ o.order_number }}</td>
+                <td><p >{{ o.email }}</p></td>      
+                <td><p class="fw-bold mb-1">₹{{ o.order_total_amount }}</p> </td>
+                <td><p class="fw-bold mb-1">{{ o.order_created_date}}</p> </td>
+                <td><div class="badge badge-success rounded-pill d-inline text-danger fw-bold">{{ o.order_status}}<br></div><br></td>
+                <td>
+                  <button type="button" class="btn btn-danger edit-button mt-1" data-toggle="modal" data-target="#editModal{{ o.id }}"><i class="fas fa-edit"></i></button> 
+                </td>
+                <td>
+                  <a href="{% url 'view_order' o.id %}" type="button" class="btn btn-primary mt-1" >View</a>
+                  {% comment %} <button type="button" class="btn btn-primary edit-button mt-1" data-toggle="modal" data-target="#editModalview{{ o.id }}">View</i></button>  {% endcomment %}
+                </td>
+          </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+    
+{% comment %}         
+<div class="row mt-5 pagination">
+  <div class="col text-center">
+    <div class="block-27">
+      {% if orders.has_other_pages %}
+      <ul>
+        {% if orders.has_previous %}
+        <li class="page-item active" ><a  href="?page={{orders.previous_page_number}}">&lt;</a></li>
+        {% else %}
+        <li class="page-item disabled"><a href="">&lt;</a></li>
+        {% endif %}
+        {% for i in orders.paginator.page_range %}
+           {% if orders.number == i  %}
+              <li class="page-item deactivate"><a class="page-link" href="#">{{i}}</a></li>
+              {% else %}
+              <li class="page-item"><a href="?page={{i}}">{{i}}</a></li>
+           {% endif %}
+        {% endfor %}
+        {% if orders.has_next %}
+          <li class=" page-item active"><a href="?page={{orders.next_page_number}}">&gt;</a></li>
+            {% else %}
+               <li class=" page-item di"><a href="#">&gt;</a></li>
+            {% endif %}
+      </ul>
+      {% endif %}
+    </div>
+  </div>
+  </div>
+</div> {% endcomment %}
+
+
+
+
+
+
+
+
+<div class="pagination justify-content-center ">
+    <span class="step-links">
+        {% if orders.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ orders.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ orders.number }} of {{ orders.paginator.num_pages }}.
+        </span>
+
+        {% if orders.has_next %}
+            <a href="?page={{ orders.next_page_number }}">next</a>
+            <a href="?page={{ orders.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+</div>
+<!-----------------------FOR CHANGE ORDER STATUS MODAL----------------------->
+{% for o in orders %}
+<div class="modal fade" id="editModal{{ o.id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{ o.id }}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalLabel{{ o.id }}">Edit Order Status</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'change_order_status' %}" method="post">
+          {% csrf_token %}
+          
+              <div class="form-group">
+                <label for="orderStatus{{ o.id }}">Order Status</label>
+                <select class="form-control" id="orderStatus{{ o.id }}" name="order_status">
+                  {% for choice in choices %}
+                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                  {% endfor %}
+                </select>
+                <input type="text" name="order_item_id" value="{{ o.id }}">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+              </div>
+           
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+
+
+<!------------------------------------VIEW USER ORDER DETAIL MODAL-------------->
+{% comment %} {% for o in orders %}
+<div class="modal fade" id="editModalview{{ o.id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{ o.id }}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalLabel{{ o.id }}">View Order </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'change_order_status' %}" method="post">
+          {% csrf_token %}
+          {% for order_item in order_items %}
+            {% if order_item.order_no == o %}
+              <div class="form-group">
+                <label for="orderStatus{{ order_item.id }}">Order Status</label>
+                <select class="form-control" id="orderStatus{{ order_item.id }}" name="order_status">
+                  {% for choice in choices %}
+                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                  {% endfor %}
+                </select>
+                <input type="text" name="order_item_id" value="{{ order_item.id }}">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %} {% endcomment %}
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjd04D2kBIFXQpeoTz1HIcje39wm4jDKdf19U8g14ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const statusButtons = document.querySelectorAll('.edit-button');
+  statusButtons.forEach(button => {
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      const orderId = button.dataset.orderId;
+      openModal(orderId);
+    });
+  });
+});
+
+function openModal(orderId) {
+  const modalId = `editModal${orderId}`;
+  document.getElementById('orderdetails').value = orderId;
+  const modal = new bootstrap.Modal(document.getElementById(modalId)); // Initialize the modal
+  modal.show();
+}
+</script>
+
+
+{% endblock body %}
+
+
+{% for o in orders %}
+<div class="modal fade" id="editModalview{{ o.id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{ o.id }}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalLabel{{ o.id }}">Edit Order Status</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'change_order_status' %}" method="post">
+          {% csrf_token %}
+          {% for order_item in order_items %}
+            {% if order_item.order_no == o %}
+              <div class="form-group">
+                <label for="orderStatus{{ order_item.id }}">Order Status</label>
+                <select class="form-control" id="orderStatus{{ order_item.id }}" name="order_status">
+                  {% for choice in choices %}
+                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                  {% endfor %}
+                </select>
+                <input type="text" name="order_item_id" value="{{ order_item.id }}">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </form>
+      </div>
+    </div>
+  </div>
+
+ 
+
+
+</div>
+
+{% endfor %}

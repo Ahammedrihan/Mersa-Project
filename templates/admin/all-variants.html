@@ -1,0 +1,94 @@
+{% extends 'admin/admin_layout/admin_main.html' %}
+{% load static %}
+
+{% block title %}Category-details{% endblock %}
+
+{% block style %}
+<style>
+.edit-button {
+   color: green;
+    }
+</style>
+
+{% endblock style %}
+
+{% block body %}
+
+
+
+<div class="container-fluid pt-4 px-">
+    <div class="row g-4">
+      <div class="col-sm-12 col-xl-12">
+        <div class="bg-light rounded h-100 p-4">
+          {% comment %} <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addproductmodal">
+            Add New Variant
+          </button> {% endcomment %}
+          <a type="button" class="btn btn-link rounded-pill edit-button m-2" href="/product/{{product.id}}/add-variant/" >ADD VARIANTS</a>
+
+          <h3 class="mb-4 mt-" style="text-align: center;">Variant Table</h3>
+          <table class="table table-hover">
+            <thead>
+              <tr> 
+                <th scope="col">Id </th>
+                <th scope="col">Variant </th>
+                <th scope="col">Product </th>
+                <th scope="col">Category </th>
+                <th scope="col">Mrp </th>
+                <th scope="col">Discount</th>
+                <th scope="col">Final Price</th>
+                <th scope="col">Stock</th>
+                <th scope="col" >images</th>
+                <th scope="col" >Actions</th>
+              </tr>
+            </thead>
+            <tbody>   
+              {% for v in variants  %}
+                <tr>
+                  <td scope="row">{{ v.id }}</td>
+                  <td>{{ v.variant_name }}</td>
+                  <td>{{ v.product.product_name }}</td>
+                  <td>{{ v.product.product_category }}</td>
+                  <td>{{ v.mrp }}</td>
+                  <td>{{ v.discount }}</td>
+                  <td>{{ v.offer_price }}</td>
+                  {% if v.variant_stock <= 0 %}
+                  <td>Out of stock </td>
+                  {% else %}
+                  <td>{{ v.variant_stock }}</td>
+                  {% endif %}
+                  {% for image in v.images.all %}
+                    <td class="align-middle"><img src="{{ image.image1.url }}"  width="50px" height="50px"></td>
+                  {% empty %}
+              <td>No image</td>
+                {% endfor %}
+
+
+
+                
+                  <td>
+                    <button type="button" class="btn btn-link rounded-pill edit-button m-2" data-bs-toggle="modal" data-bs-target="#editproductmodal{{ p.id }}">Edit</button>
+                    {% comment %} <a type="button" class="btn btn-link rounded-pill edit-button m-2" href="/product/{{p.id}}/add-variant" >Add Variant</a> {% endcomment %}
+                  </td>
+                  {% endfor %}
+                </tbody>
+              </table>
+
+
+
+{% endblock body %}
+
+
+
+
+
+
+
+
+
+
+
+
+ <h1>Add a variant for product {{product.product_name}}</h1>
+{% for variant in variants %}
+<h1>{{variant.variant_name}}</h1>
+{% endfor %} 

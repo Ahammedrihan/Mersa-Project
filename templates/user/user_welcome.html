@@ -1,0 +1,109 @@
+{% extends 'layouts/main.html' %}
+{% load static %}
+
+
+{% block body %}
+
+<section id="home-section" class="hero">
+    <div class="home-slider owl-carousel">
+    <div class="slider-item" style="background-image: url(images/bg_1.jpg);">
+        <div class="overlay"></div>
+      <div class="container">
+        <div class="row slider-text justify-content-center align-items-center" data-scrollax-parent="true">
+
+          <div class="col-md-12 ftco-animate text-center">
+            <h1 class="mb-2">Welcome TO Mersa </h1>
+            <p><h2 class="subheading mb-4"> Uninterrupted Power for Peace of Mind </h2></p>
+            <a href="{% url 'home' %}" class="btn btn-primary">Home Page</a>
+            <a href="{% url 'userlogin' %}" class="btn btn-primary">Sign in</a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="slider-item" style="background-image: url(images/bg_2.jpg);">
+        <div class="overlay"></div>
+      <div class="container">
+        <div class="row slider-text justify-content-center align-items-center" data-scrollax-parent="true">
+
+          <div class="col-sm-12 ftco-animate text-center">
+            <h1 class="mb-2">Power You Can Rely On</h1>           
+            <p><h2 class="subheading mb-4">Reliable Power When You Need It</h2></p>
+            <a href="{% url 'home' %}" class="btn btn-primary">Home Page</a>
+            <a href="#" class="btn btn-primary">Sign in</a>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="ftco-section">
+      <div class="container">
+          <div class="row no-gutters ftco-services">
+    <div class="col-md-4 text-center d-flex align-self-stretch ftco-animate">
+      <div class="media block-6 services mb-md-0 mb-4">
+        <div class="icon bg-color-1 active d-flex justify-content-center align-items-center mb-2">
+              <span class="flaticon-shipped"></span>
+        </div>
+        <div class="media-body">
+          <h3 class="heading">Free Shipping</h3>
+          <span>On order over $100</span>
+        </div>
+      </div>      
+    </div>
+
+
+
+    <div class="col-md-4 text-center d-flex align-self-stretch ftco-animate">
+      <div class="media block-6 services mb-md-0 mb-4">
+        <div class="icon bg-color-3 d-flex justify-content-center align-items-center mb-2">
+              <span class="flaticon-award"></span>
+        </div>
+        <div class="media-body">
+          <h3 class="heading">Superior Quality</h3>
+          <span>Quality Products</span>
+        </div>
+      </div>      
+    </div>
+    <div class="col-md-4 text-center d-flex align-self-stretch ftco-animate">
+      <div class="media block-6 services mb-md-0 mb-4">
+        <div class="icon bg-color-4 d-flex justify-content-center align-items-center mb-2">
+              <span class="flaticon-customer-service"></span>
+        </div>
+        <div class="media-body">
+          <h3 class="heading">Support</h3>
+          <span>24/7 Support</span>
+        </div>
+      </div>      
+    </div>
+  </div>
+      </div>
+  </section>
+
+  <section class="ftco-section img m-3" style="background-image: url('{% static 'images/inv3.jpg' %}')">
+  
+  <div class="container ">
+          <div class="row justify-content-end ">
+    <div class="col-md-6 heading-section ftco-animate deal-of-the-day ftco-animate">
+
+      <h2 class="mb-4 text-black">Deal of the day</h2>
+      <h3><a class=" text-light" href="#">Luminous Inverter</a></h3>
+      <span class="price text black">$200 now $5 only</span>
+      
+      <div id="timer" class="d-flex mt-5 ">
+                    <div class="time text-light" id="days"></div>
+                    <div class="time pl-3 text-light" id="hours"></div>
+                    <div class="time pl-3 text-light" id="minutes"></div>
+                    <div class="time pl-3 text-light" id="seconds"></div>
+                  </div>
+                
+    </div>
+  </div>   		
+  </div>
+</section>
+
+{% endblock body %}
