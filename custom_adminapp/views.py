@@ -310,7 +310,7 @@ class ListVariants(ListView):
 
 
 
-@login_required(login_url='adminlogin')
+
 def shop_product(request, product_id, variant_id):
     product = Product.objects.get(id=product_id)
     variant = Variant.objects.get(id=variant_id)
