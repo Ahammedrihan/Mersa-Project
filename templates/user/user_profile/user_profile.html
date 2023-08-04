@@ -1,9 +1,5 @@
 {% extends 'layouts/main.html' %}
 {% load static %}
-
-
-
-
 {% block style %}
 <style>
     .capitalize-and-bold {
@@ -12,44 +8,28 @@
         /* Add any additional styles you want */
     }
 </style>
-
 {% endblock style %}
-
 {% block body %}
- 
- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <div class="container mt-5">
   <div class="row gutters">
       <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
           <!-- User Profile Card -->
           <div class="card h-100">
               <div class="card-body">
-                
                   <div class="account-settings">
-
-                    <div class="text-center">
-                        <img src="{{ profile_image.url }}" alt="Profile Photo" class="rounded-circle mt-5 mb-3" style="width: 150px; height: 150px;">
-                        <h5 class="card-title capitalize-and-bold">{{user.first_name}}</h5>
-                        <button type="button" class="btn btn-primary btn-sm mt-2" onclick="document.getElementById('profile-photo-input').click();">
-                            Upload Photo
-                        </button>
-                        <input type="file" id="profile-photo-input"  style="display: none;">
-                    </div>
-                    
-                      <div class="row p-4">
-                       
-
+                      <div class="row p-4 mt-5">
                           <button type="button"
                                   class="btn btn-primary btn-block btn-lg w-100"
                                   onclick="window.location.href='{% url 'user_profile_orders'%}'">View Order</button>
                           <button type="button"
                                   class="btn btn-primary btn-block btn-lg w-100 mt-2"
-                                  onclick="window.location.href='{% url 'user_profile'%}'">View Profile</button>
+                                  onclick="window.location.href='{% url 'user_profile'%}'">View Profile</button> 
                            <button type="button"
                                   class="btn btn-primary btn-block btn-lg w-100"
                                   onclick="window.location.href='{% url 'reset_password_page'%}'">Reset Passwrod</button> 
+                                  
                       </div>
                   </div>
               </div>
@@ -57,16 +37,93 @@
       </div>
       <!-- Address Cards Section -->
      
-            <!-- Address Cards Section -->
-            
+        <!-- Address Cards Section -->
             <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
               <div class="card h-100">
                   <div class="card-body">
+                    <h3 class="mb-2  text-center capitalize-and-bold"> Welcome   {{user.first_name}}</h3>
+                    <section style="background-color: #eee;">
+                        <div class="container py-5">
+                          <div class="row">
+                            <div class="col">
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-lg-4">
+                              <div class="card mb-4">
+                                <div class="card-body text-center">
+                                        {% comment %} <img src="{{ profile_image.url }}" alt="Profile Photo" class="rounded-circle mt-5 mb-3" style="width: 150px; height: 150px;">
+                                        <h5 class="card-title capitalize-and-bold">{{user.first_name}}</h5> {% endcomment %}
+                           
+                                  {% comment %} <img src="{{profile_address.profile_image.url}}" alt="avatar"
+                                    class="rounded-circle img-fluid" style="width: 150px;"> {% endcomment %}
+                            
+                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
+                                    class="rounded-circle img-fluid" style="width: 150px;">
+                            
+                                  <div class="text-center">
+                                  <button type="button" class="btn btn-primary btn-sm mt-2" onclick="document.getElementById('profile-photo-input').click();">
+                                    Upload Photo
+                                </button>
+                                <input type="file" id="profile-photo-input"  style="display: none;">
+                            </div>
+                            <button type="button"
+                                                class="btn btn-primary btn mt-2"
+                                                data-toggle="modal"
+                                                data-target="#exampleModalCenter">Add Address</button>
+                                 
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-lg-8">
+                              <div class="card mb-4">
+                                <div class="card-body">
+                                  <div class="row">
+                                    <div class="col-sm-3">
+                                      <p class="mb-0">Full Name</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                      <p class="text-muted mb-0">{{user.first_name}}</p>
+                                    </div>
+                                  </div>
+                                  <hr>
+                                  <div class="row">
+                                    <div class="col-sm-3">
+                                      <p class="mb-0">Email</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                      <p class="text-muted mb-0">{{user.email}}</p>
+                                    </div>
+                                  </div>
+                                  <hr>
+                                  <div class="row">
+                                    <div class="col-sm-3">
+                                      <p class="mb-0">Phone</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                      <p class="text-muted mb-0">{{user.phone_number}}</p>
+                                    </div>
+                                  </div>
+                                  <hr>
+                                  <div class="row">
+                                    <div class="col-sm-3">
+                                      <p class="mb-0">Wallet balance</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                      <p class="text-muted mb-0"> ₹ {{user_wallet.balance}}</p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </section>
                       <div class="row gutters">
                         <div class="col-md-12 align-center">
-                            
-                                <h3 class="mb-2  text-center capitalize-and-bold"> Welcome   {{user.first_name}}</h3>
-                            
+                           
+        
                                 
                             {% comment %} </div>  
                             <div class="card">
@@ -88,9 +145,13 @@
                         {% comment %} <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 d-flex justify-content-center">
                             <h4 class="text-danger">Welcome {{ user.first_name }}</h4>
                           </div>                         {% endcomment %}
+
+
+                       
+                        
          
                           <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 d-flex flex-wrap">
-                              {% for profile_address in profile_address_all %}
+                            {% for profile_address in profile_address_all %}
                                   <div class="card mr-2 mb-2" style="width: 15rem;">
                                       <div class="card-body " style="border-radius: 10px">
                                           
@@ -134,9 +195,6 @@
                               {% endfor %}
                           </div>
                           <div class="card-body " style="border-radius: 10px">
-                            
-                                <h6>Available Wallet balance = ₹ {{user_wallet.balance}}</h6>
-                         
                           </div>
                           <!-- Personal Details Section -->
                       </div>
@@ -531,6 +589,7 @@ document.querySelector('form').addEventListener('submit', function (event) {
 });
 </script>
 {% endblock %}
+
 
 
 

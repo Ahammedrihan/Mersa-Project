@@ -1,51 +1,73 @@
 {% extends 'layouts/main.html' %}
 {% load static %}
-
-
-
 {% block style %}
-
-
-
   <!-- Add your other meta tags and CSS links here -->
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+<style>
+  /* Replace 'your-style.css' with the actual path to your CSS file */
+/* If you don't have a custom CSS file, you can add the styles in your <style> tag or in the head section of your HTML file. */
+
+/* your-style.css */
+.attractive-image {
+  /* Add border radius to make the images rounded */
+  border-radius: 2px;
+  
+  /* Add box-shadow to give a soft shadow effect */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  
+  /* Reduce the size of the images */
+  max-width: 150px;
+  max-height: 100px;
+  /* Add a little margin to separate the images */
+  margin: 10px;
+}
+
+/* On hover, you can add some transition effect to make the images scale a bit */
+.attractive-image:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease-in-out;
+}
+
+
+  /* Add your custom styles here */
+  #home-section .slider-item {
+    /* Set the desired height for the slider item */
+    height: 500px;
+    /* Set the background size to cover, so the image covers the entire slider item */
+    background-size: cover;
+    /* Center the background image within the slider item */
+    background-position: center;
+  }
+</style>
 
 
 
 {% endblock style %}
-
 {% block body %}
-
-
 <section id="home-section" class="hero">
   <div class="home-slider owl-carousel">
-    <div class="slider-item" style="background-image: url({% static 'images/dhoni-menu.png' %});">
+    <div class="slider-item" style="background-image: url({% static 'images/homepage_slider2.jpg' %});">
       <div class="overlay"></div>
       <div class="container">
         <div class="row slider-text justify-content-center align-items-center" data-scrollax-parent="true">
-
           <div class="col-md-12 ftco-animate text-center">
             <h1 class="mb-2"> Mersa Home</h1>
             <h2 class="subheading mb-4">Uninterrupted Power for Peace of Mind</h2>
-            <p><a href="#" class="btn btn-primary">View Details</a></p>
+            {% comment %} <p><a href="#" class="btn btn-primary">View Details</a></p> {% endcomment %}
           </div>
-
         </div>
       </div>
     </div>
-
-    <div class="slider-item" style="background-image: url({% static 'images/inv.jpeg' %});">
+    <div class="slider-item" style="background-image: url({% static 'images/nv.jpeg' %});">
       <div class="overlay"></div>
       <div class="container">
         <div class="row slider-text justify-content-center align-items-center" data-scrollax-parent="true">
-
           <div class="col-sm-12 ftco-animate text-center">
             <h1 class="mb-2">Power You Can Rely On</h1>
             <h2 class="subheading mb-4">Reliable Power When You Need It</h2>
-            <p><a href="#" class="btn btn-primary">View Details</a></p>
+            {% comment %} <p><a href="#" class="btn btn-primary">View Details</a></p> {% endcomment %}
           </div>
-
         </div>
       </div>
     </div>
@@ -60,9 +82,11 @@
     <div class="row">
       <div class="col-md-12">
         <div class="row d-flex justify-content-center">
-          <div class="col-md-6 text-center">
+          <div class="col-md-6 heading-section ftco-animate text-center">
+            
+              
             <h2>Shop By Category</h2>
-            <p><a href="#" class="btn btn-primary">Shop now</a></p>
+            {% comment %} <p><a href="#" class="btn btn-primary">Shop now</a></p> {% endcomment %}
           </div>
         </div>
       </div>
@@ -70,8 +94,8 @@
         <div class="row d-flex justify-content-center"> <!-- Add justify-content-center class here -->
           {% for cat in categories %}
             <div class="col-md-4 ">
+              
               <div class="category-wrap ftco-animate img mb-4 d-flex align-items-end" style="background-image: url({{ cat.category_image.url }});">
-
                 <div class="text px-3 py-1">
                   <h2 class="mb-0"><a href="{% url 'shop_by_category' cat.id %}">{{ cat.category_name }}</a></h2>
                 </div>
@@ -87,34 +111,31 @@
 
 
 
-<section class="ftco-section">
+{% comment %} <section class="ftco-section">
   <div class="container">
     <div class="row justify-content-center mb-3 pb-3">
       <div class="col-md-12  heading-section text-center ftco-animate">
         <span class="subheading">Featured Products</span>
-        <h2 class="mb-4">Our Products</h2>
-        <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia</p>
+        <h2 class="mb-4">Top Selling Products</h2>
+        <p>Power You Can Rely On</p>
       </div>
     </div>
   </div>
   <div class="container">
     <div class="row">
-      {% for prod in product %}
+      
+      {% for prod in products  %}
       <div class="col-md-6 col-lg-3 col-6 ftco-animate">
         <div class="product">
-          {% comment <a href="{% url 'shop_by_product' prod.id %}" class="img-prod"> {% endcomment %}
+          <a href="{% url 'shop_by_product' prod.id variant.id %}" class="img-prod"> 
             
             <span class="status">30%</span>
             <div style="display: flex; justify-content: center; align-items: center; height: 250px;">
               <img class="img-fluid" src="{{ prod.product_image.url }}" alt="img" style="max-width: 90%; max-height: 80%;">
             </div>
             {% comment %} <img class="img-fluid" src="{{ prod.product_image.url }}" alt="img" style="width: 80%; height: 250px;"> {% endcomment %}
-            <div class="overlay"></div>
+            {% comment %} <div class="overlay"></div>
           </a>
-
-
-
-          
           <div class="text py-3 pb-4 px-3 text-center">
             <h3><a href="#">{{ prod.product_name }}</a></h3>
             <div class="d-flex">
@@ -128,11 +149,10 @@
           </div>
         </div>
       </div>
-      
       {% endfor %}
     </div>
   </div>
-</section>
+</section>  {% endcomment %}
 
 
 
@@ -146,33 +166,14 @@
 
 
 
-<section class="ftco-section img" style="background-image: url(images/bg_3.jpg);">
-  <div class="container">
-    <div class="row justify-content-end">
-      <div class="col-md-6 heading-section ftco-animate deal-of-the-day ftco-animate">
-        <span class="subheading">Best Price For You</span>
-        <h2 class="mb-4">Deal of the day</h2>
-        <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia</p>
-        <h3><a href="#">Spinach</a></h3>
-        <span class="price">$10 <a href="#">now $5 only</a></span>
-        <div id="timer" class="d-flex mt-5">
-          <div class="time" id="days"></div>
-          <div class="time pl-3" id="hours"></div>
-          <div class="time pl-3" id="minutes"></div>
-          <div class="time pl-3" id="seconds"></div>
-        </div>
-      </div>
-    </div>   		
-  </div>
-</section>
+
 
 <section class="ftco-section testimony-section">
   <div class="container">
     <div class="row justify-content-center mb-5 pb-3">
       <div class="col-md-7 heading-section ftco-animate text-center">
-        <span class="subheading">Testimony</span>
-        <h2 class="mb-4">Our satisfied customer says</h2>
-        <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in</p>
+        <h2>Our Satisfied Customers</h2>
+        <p></p>
       </div>
     </div>
     <div class="row ftco-animate">
@@ -258,25 +259,22 @@
 
 <section class="ftco-section ftco-partner">
   <div class="container">
-    <div class="row">
-      <div class="col-sm ftco-animate">
-        <a href="#" class="partner"><img src="images/partner-1.png" class="img-fluid" alt="Colorlib Template"></a>
+    <div class="row justify-content-center">
+      
+      <div class="col-4 ftco-animate">
+        <a href="#" class="partner"><img src="{% static 'images/exide_logo.jpg' %}" class="img-fluid attractive-image" alt="Exide Logo"></a>
       </div>
-      <div class="col-sm ftco-animate">
-        <a href="#" class="partner"><img src="images/partner-2.png" class="img-fluid" alt="Colorlib Template"></a>
+      <div class="col-4 ftco-animate">
+        <a href="#" class="partner"><img src="{% static 'images/livfast_logo.png' %}" class="img-fluid attractive-image" alt="Livfast Logo"></a>
       </div>
-      <div class="col-sm ftco-animate">
-        <a href="#" class="partner"><img src="images/partner-3.png" class="img-fluid" alt="Colorlib Template"></a>
+      <div class="col-4 ftco-animate">
+        <a href="#" class="partner"><img src="{% static 'images/luminous_logo.png' %}" class="img-fluid attractive-image" alt="Luminous Logo"></a>
       </div>
-      <div class="col-sm ftco-animate">
-        <a href="#" class="partner"><img src="images/partner-4.png" class="img-fluid" alt="Colorlib Template"></a>
-      </div>
-      <div class="col-sm ftco-animate">
-        <a href="#" class="partner"><img src="images/partner-5.png" class="img-fluid" alt="Colorlib Template"></a>
-      </div>
+     
     </div>
   </div>
 </section>
+
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
@@ -284,28 +282,3 @@
 
 
 
-
-
-
-<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-  Total Mrp
-  <span><strong>₹{{ cart.get_total_mrp  }}</strong></span>
-</li>
-
-<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-  Total Offer Price
-  <span><strong>₹{{ cart.get_total_offer_price  }}</strong></span>
-</li>
-<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-  Total Discount
-  <span><strong>-₹{{ cart.get_total_discount_price  }}</strong></span>
-</li>
-<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-  Coupon applied
-  <span><strong> {% if calculate_discount %}-₹{{ cart.calculate_discount  }} {% else %}₹0{% endif %}</strong></span>
-</li>
-
-<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-  Shipping Charge 
-  <span><strong>{% if get_shipping_charge %}+₹{{ cart.get_shipping_charge }} {% else %}₹0{% endif %}</strong></span>
-</li>

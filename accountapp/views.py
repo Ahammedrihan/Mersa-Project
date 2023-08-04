@@ -207,7 +207,10 @@ def shop_page(request):
 def home_page(request):
     products = Product.objects.all()
     category = Category.objects.all()
+    
     return render(request,"user/user_home.html",{"product":products ,"categories":category})
+
+
    
    
 

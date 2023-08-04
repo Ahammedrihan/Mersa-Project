@@ -44,14 +44,6 @@
                   <div class="account-settings">
 
 
-                    <div class="text-center">
-                        <img src="" alt="Profile Photo" class="rounded-circle mt-5 mb-3" style="width: 150px; height: 150px;">
-                        <h5 class="card-title">{{request.user.first_name}}</h5>
-                        <button type="button" class="btn btn-primary btn-sm mt-2" onclick="document.getElementById('profile-photo-input').click();">
-                            Upload Photo
-                        </button>
-                        <input type="file" id="profile-photo-input" style="display: none;">
-                    </div>
                       <!-- View Order Button -->
                       <div class="row p-4">
                           <button type="button"
@@ -62,7 +54,7 @@
                                   onclick="window.location.href='{% url 'user_profile'%}'">View Profile</button>
                           <button type="button"
                                   class="btn btn-primary btn-block btn-lg w-100"
-                                  onclick="window.location.href='{% url 'reset_password_page'%}'">Back</button>
+                                  onclick="window.location.href='{% url 'reset_password_page'%}'">Reset Password</button>
                       </div>
                   </div>
               </div>
@@ -75,7 +67,7 @@
                   <div class="row gutters">
                              
 
-                    {% if not order  %}
+                    {% if orders  %}
 
                     <div class="col-md-12 align-center">
                         <div class="card">

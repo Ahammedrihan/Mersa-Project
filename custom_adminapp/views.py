@@ -22,14 +22,11 @@ from django.db.models import functions
 from django.db.models import Count
 from datetime import datetime, timedelta
 from orderapp.models import Order
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.http import JsonResponse
+from django.views.decorators.http import require_GET
+from .models import Variant
+from django.db.models import Sum
 
-
-
-
-
-
-# Create your views here.
 
 @never_cache
 def admin_login(request):
@@ -46,200 +43,215 @@ def admin_login(request):
             else:
                 return redirect('adminlogin')
         else:
-            # Handle the case when authentication fails
             return redirect('adminlogin')
     return render(request,"admin/admin_login.html")
+
 
 @never_cache
 def admin_signout(request):
     if request.user.is_superuser:
         logout(request)
         return redirect('adminlogin')
-
-@login_required
+    
+    
+    
+@login_required(login_url='adminlogin')
 @never_cache
 def admin_home(request):
     if request.user.is_superuser:
-       return render(request,'admin/admin_home.html')
+        return render(request,'admin/admin_home.html')
+    else:
+        return redirect('adminlogin')
+    
 
-@login_required
+@login_required(login_url='adminlogin')
 @never_cache
 def users_details(request):
-    data = CustomUser.objects.all().order_by('-id')
-    user_count = data.count()
-    paginator = Paginator(data,10)
-    page = request.GET.get('page')
-    paged_order = paginator.get_page(page)
+    if request.user.is_superuser:
+        data = CustomUser.objects.all().order_by('-id')
+        user_count = data.count()
+        paginator = Paginator(data,10)
+        page = request.GET.get('page')
+        paged_order = paginator.get_page(page)
+        context ={"data":paged_order}
+        return render(request,"admin/user_details.html",context)
+    else:
+        return redirect('adminlogin')
 
 
-    context ={"data":paged_order}
-    return render(request,"admin/user_details.html",context)
-
-@login_required
+@login_required(login_url='adminlogin')
 @never_cache
 def user_block(request,id):
-    if request.method=='POST':
-       user =CustomUser.objects.get(pk=id)
-       user.is_active = False
-       user.save()
-       print(user,'111111111111111111111111111111111111111111111111111111111111')
-       return redirect('userdetails')
+    if request.user.is_superuser:
+        if request.method=='POST':
+            user =CustomUser.objects.get(pk=id)
+            user.is_active = False
+            user.save()
+            return redirect('userdetails')
+    else:
+        return redirect('adminlogin')
+    
 
-@login_required
+@login_required(login_url='adminlogin')
 @never_cache
 def user_un_block(request,id):
-    if request.method=='POST':
-        user =CustomUser.objects.get(pk=id)
-        user.is_active = True
-        user.save()
-        print(user)
-        return redirect('userdetails')
+    if request.user.is_superuser:
+        if request.method=='POST':
+            user =CustomUser.objects.get(pk=id)
+            user.is_active = True
+            user.save()
+            return redirect('userdetails')
+    else:
+        return redirect('adminlogin')
     
-@login_required
+
+@login_required(login_url='adminlogin')
 @never_cache
 def brandlist(request):
     if request.user.is_superuser:
         brand = Brand.objects.all().order_by('id')
         return render(request,"admin/brand.html",{"brand":brand})
-
-@login_required
+    else:
+        return redirect('adminlogin')
+    
+    
+@login_required(login_url='adminlogin')
 @never_cache
 def categorylist(request):
     if request.user.is_superuser:
         category = Category.objects.all().order_by('id')
         return render(request,"admin/category.html",{"category":category})
+    else:
+        return redirect('adminlogin')
     
 
  
-@login_required
+@login_required(login_url='adminlogin')
 @never_cache
 def productlist(request):
     if request.user.is_superuser:
         product = Product.objects.all().order_by('id')
         brands = Brand.objects.all()
         category = Category.objects.all()
-
         return render(request,"admin/product.html",{"product":product,'brands':brands,"categorys":category })
+    else:
+        return redirect('adminlogin')
 
 
-@login_required
+@login_required(login_url='adminlogin')
 @never_cache
-
 def add_category(request):
-    if request.method == 'POST':
-        category_name = request.POST.get('category_name')
-        category_image = request.POST.get('category_image')
-        category_status = request.POST.get('category_status') == 'on' 
-        category = Category(category_name=category_name,category_status=category_status,category_image=category_image)
-        category.save()
-        return redirect('category')
-    return render(request, 'admin/category.html')
+    if request.user.is_superuser:
+        if request.method == 'POST':
+            category_name = request.POST.get('category_name')
+            category_image = request.FILES.get('category_image')
+            category_status = request.POST.get('category_status')
+            status = bool(category_status)
+            category = Category(category_name=category_name,category_status=status,category_image=category_image)
+            category.save()
+            return redirect('category')
+        return render(request, 'admin/category.html')
+    else:
+        return redirect('adminlogin')
 
- 
-@login_required
+@login_required(login_url='adminlogin')
 @never_cache
 def add_brand( request):
-    if request.method =='POST':
-        new_brand = request.POST.get('brand_name')
-        brand_status = request.POST.get('brand_status',False) == 'on' 
-        brand = Brand(brand_name =new_brand, brand_status= brand_status)
-        brand.save()
-        return redirect('brand')
-    return render(request, 'admin/brand.html')
+    if request.user.is_superuser:
+        if request.method =='POST':
+            new_brand = request.POST.get('brand_name')
+            brand_status = request.POST.get('brand_status')
+            status = bool(brand_status)
+            brand = Brand(brand_name =new_brand, brand_status= status)
+            brand.save()
+            return redirect('brand')
+        return render(request, 'admin/brand.html')
+    else:
+        return redirect('adminlogin')
 
  
-@login_required
+@login_required(login_url='adminlogin')
 @never_cache 
 def add_product(request):
-    if request.method =='POST':
-        product_name = request.POST.get('product_name')
-        category = request.POST.get('product_category')
-        brand= request.POST.get('product_brand')
-        product_description = request.POST.get('product_description')
-        product_image = request.FILES.get('product_image')
-        # product_mrp = request.POST.get('product_mrp')
-        # product_discount =request.POST.get('product_discount')
-        # product_offer_price =request.POST.get('product_offer_price')
-        # product_stock=request.POST.get('product_stock')
-        product_status = request.POST.get('product_status', False) == 'true'
-        # is_deleted = request.POST.get('is_deleted') == 'on' # When a checkbox is checked and submitted, it will send the value 'on' in the POST data. Therefore, this line of code is used to determine whether the checkbox is checked or not.
-#The variable is_deleted will be True if the checkbox is checked 
-
-        product_brand = Brand.objects.get(id=brand)
-        product_category =Category.objects.get(id =category)
-        print(product_brand)
-        print(brand)
-        print(category)
-        print(product_category)
-        # print(product_name,product_category,product_brand,product_price,product_description)
-        product = Product(product_name = product_name,product_category=product_category,product_brand=product_brand,
-                  product_description=product_description,product_image =product_image
-                  ,product_status=product_status)
-        product.save()
-        return redirect('product')
-    return render(request,'admin/product.html')
+    if request.user.is_superuser:
+        if request.method =='POST':
+            product_name = request.POST.get('product_name')
+            category = request.POST.get('product_category')
+            brand= request.POST.get('product_brand')
+            product_description = request.POST.get('product_description')
+            product_image = request.FILES.get('product_image')
+            product_status = request.POST.get('product_status', False) == 'true'
+            product_brand = Brand.objects.get(id=brand)
+            product_category =Category.objects.get(id =category)
+            product = Product(product_name = product_name,product_category=product_category,product_brand=product_brand,
+                    product_description=product_description,product_image =product_image
+                    ,product_status=product_status)
+            product.save()
+            return redirect('product')
+        return render(request,'admin/product.html')
+    else:
+        return redirect('adminlogin')
+    
  
-@login_required
+@login_required(login_url='adminlogin')
 @never_cache
 def edit_product(request,product_id):
-    if request.method=='POST':
-        edited_product_name = request.POST.get('product_name')
-        sub_edited_category =request.POST.get('product_category')
-        sub_edited_brand =request.POST.get('product_brand')
-        edited_product_description =request.POST.get('product_description')
-        edited_product_image =request.FILES.get('product_image')
-        print(sub_edited_category)
-
-        edited_category =Category.objects.get(id=sub_edited_category)
-        print(edited_category)
-        edited_brand = Brand.objects.get(id=sub_edited_brand)
-
-
-        edit = Product.objects.get(id=product_id)
-        edit.product_name = edited_product_name
-        edit.product_image = edited_product_image
-      
-
-        edit.product_brand =edited_brand
-        edit.product_category = edited_category
-        edit.product_description = edited_product_description
-        edit.save()
-        return redirect('product')
-
-    return render(request,"admin/product.html")
+    if request.user.is_superuser:
+        if request.method=='POST':
+            edited_product_name = request.POST.get('product_name')
+            sub_edited_category =request.POST.get('product_category')
+            sub_edited_brand =request.POST.get('product_brand')
+            edited_product_description =request.POST.get('product_description')
+            edited_product_image =request.FILES.get('product_image')
+            edited_category =Category.objects.get(id=sub_edited_category)
+            edited_brand = Brand.objects.get(id=sub_edited_brand)
+            edit = Product.objects.get(id=product_id)
+            edit.product_name = edited_product_name
+            edit.product_image = edited_product_image
+            edit.product_brand =edited_brand
+            edit.product_category = edited_category
+            edit.product_description = edited_product_description
+            edit.save()
+            return redirect('product')
+        return render(request,"admin/product.html")
+    else:
+        return redirect('adminlogin')
 
  
-@login_required
+@login_required(login_url='adminlogin')
 @never_cache
 def edit_brand(request,brand_id):
-    if request.method=="POST":
-        edit_brand_name = request.POST.get('editbrand_name')
-        edit_brand_status = request.POST.get('editbrand_status')
-        edit = Brand.objects.get(id=brand_id)
-        edit.brand_name = edit_brand_name
-        edit.brand_status = True if edit_brand_status == 'on' else False
-        edit.save()
-        return redirect('brand')
-    return render(request,'admin/brand.html')
+    if request.user.is_superuser:
+        if request.method=="POST":
+            edit_brand_name = request.POST.get('editbrand_name')
+            edit_brand_status = request.POST.get('editbrand_status')
+            edit = Brand.objects.get(id=brand_id)
+            edit.brand_name = edit_brand_name
+            edit.brand_status = True if edit_brand_status == 'on' else False
+            edit.save()
+            return redirect('brand')
+        return render(request,'admin/brand.html')
+    else:
+        return redirect('adminlogin')
 
- 
-@login_required
+
+@login_required(login_url='adminlogin')
 @never_cache
 def edit_category(request,category_id):
-    if request.method=="POST":
-        edit_category_name = request.POST.get('editcategory_name')
-        edit_category_image = request.FILES.get('editcategory_image')
-        edit_category_status = request.POST.get('editcategory_status')
-
-        edit = Category.objects.get(id=category_id)
-        edit.category_name = edit_category_name
-        edit.category_image =edit_category_image
-        edit.category_status = True if edit_category_status == 'on' else False
-
-        edit.save()
-        return redirect('category')
-    return render(request,'admin/category.html')
-
+    if request.user.is_superuser:
+        if request.method=="POST":
+            edit_category_name = request.POST.get('editcategory_name')
+            edit_category_image = request.FILES.get('editcategory_image')
+            edit_category_status = request.POST.get('editcategory_status')
+            edit = Category.objects.get(id=category_id)
+            edit.category_name = edit_category_name
+            edit.category_image =edit_category_image
+            edit.category_status = True if edit_category_status == 'on' else False
+            edit.save()
+            return redirect('category')
+        return render(request,'admin/category.html')
+    else:
+        return redirect('adminlogin')
 
 
 class AddVariant(FormView):
@@ -273,7 +285,6 @@ class AddVariant(FormView):
 
 
 
-
 class ListVariants(ListView):
     model = Variant ,VariantImage
     template_name = 'admin/all-variants.html'
@@ -299,6 +310,7 @@ class ListVariants(ListView):
 
 
 
+@login_required(login_url='adminlogin')
 def shop_product(request, product_id, variant_id):
     product = Product.objects.get(id=product_id)
     variant = Variant.objects.get(id=variant_id)
@@ -324,9 +336,6 @@ def shop_product(request, product_id, variant_id):
   
 
 
-from django.http import JsonResponse
-from django.views.decorators.http import require_GET
-from .models import Variant
 
 @require_GET
 def get_variant_details(request):
@@ -362,7 +371,6 @@ def get_variant_details(request):
 
 
 def orders(request):
-
     orders = Order.objects.all().order_by('-order_created_date')
     order_count = orders.count()
     paginator = Paginator(orders,6)
@@ -374,32 +382,17 @@ def orders(request):
     return render(request,"admin/admin_orders.html",{"orders":paged_order,"order_items":order_items,"choices":order_status,"order_count":order_count})
 
 
-# def user_order_products(request):
-            
-#             order =  Order.objects.filter(user = request.user)
-#             for o in order:
-#                 order_products =  OrderProduct.objects.filter(order_no = o) 
-
-#             return render(request, "admin/admin_orders.html", {
-#                 'order': order,
-#                 'order_products': order_products,})
-      
 
 
-
+@login_required(login_url='adminlogin')
 def change_order_status(request):
 
     if request.method == 'POST':
         order_id = request.POST.get('order_item_id')
         order_status_update = request.POST.get('order_status')
-        
         order = Order.objects.get(id = order_id ) 
         order.order_status = order_status_update
         order.save()
-        
-
-       
-
         return redirect('orders')    
     else:   
        return render(request,"admin/admin_orders.html")
@@ -434,7 +427,7 @@ def shop_category(request,category_id):
    
 
 
-
+@login_required(login_url='adminlogin')
 def coupon_list(request):
     coupons = Coupon.objects.all()
     coupon_DISCOUNT_TYPES = Coupon.DISCOUNT_TYPES
@@ -448,7 +441,7 @@ def coupon_list(request):
 
 
 
-
+@login_required(login_url='adminlogin')
 def add_coupon(request):
     if request.method == "POST":
         
@@ -485,6 +478,7 @@ def add_coupon(request):
         return redirect('coupon_list')
     return render(request, "admin/admin_coupon_manage.html")
 
+@login_required(login_url='adminlogin')
 def edit_coupon(request, coupon_id):
     if request.method == "POST":
         edit_coupon_name = request.POST.get('coupon_name')
@@ -519,15 +513,14 @@ def edit_coupon(request, coupon_id):
     return render(request, "admin/admin_coupon_manage.html")
 
 
-
+@login_required(login_url='adminlogin')
 def view_coupon(request):
     coupon_view = Coupon.objects.all()
     return render(request, "admin/admin_coupon_manage.html")
 
 
-
+@login_required(login_url='adminlogin')
 def view_order(request,order_id):
-    
     order = Order.objects.get(id = order_id) 
     order_items = OrderProduct.objects.filter(order_no = order)
     context ={
@@ -537,17 +530,14 @@ def view_order(request,order_id):
     return render(request,"admin/admin_view_orders.html",context)
 
 
-
+@login_required(login_url='adminlogin')
 def update_order_status(request,item_id,status):
-    print("helooooo")
     order_item = OrderProduct.objects.get(id = item_id)
     if status =='Cancelled':
-        print("cancelled")
         variant = Variant.objects.get(id = order_item.varaiant.id)
         variant.variant_stock += 1
         order_item.product_status ="Cancelled"
         order_item.save()
-        print(order_item.product_status)
     elif status =='Pending':
         order_item.product_status ='Confirmed'
         order_item.save()
@@ -564,28 +554,9 @@ def update_order_status(request,item_id,status):
         pass
     return redirect('orders')
 
-    
-
-    
-
-    
-    
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-from django.db.models import Sum
+@login_required(login_url='adminlogin')
 def admin_dashboard(request):
     
     daily_total_revenue = 0
@@ -598,10 +569,8 @@ def admin_dashboard(request):
     variants = Variant.objects.filter(variant_status=True)
     low_stock = [variant for variant in variants if variant.variant_stock <= 5]
     today_date = datetime.now()
-
     week_start_date = today_date - timedelta(days=today_date.weekday())
     week_end_date = week_start_date + timedelta(days=6)
-
     month_start_date = today_date.replace(day=1)
     month_end_date = month_start_date.replace(day=28) + timedelta(days=4)
     
@@ -621,8 +590,6 @@ def admin_dashboard(request):
     else:
         weekly_total_revenue = week_revenue
 
-
-
     daily_sales_per_day = Order.objects.filter(order_created_date__date__range=(week_start_date, week_end_date)) \
         .values('order_created_date__date').annotate(daily_sales_count=Count('id'), total_daily_sales=Sum('order_total_amount'))
     
@@ -637,42 +604,28 @@ def admin_dashboard(request):
 
     user_payment_counts = Order.objects.filter(order_created_date__date__range=(week_start_date, week_end_date)).values('payment_mode')\
     .annotate(payment_count = Count('id'))
-
     payment_label = [payment['payment_mode'] for payment in user_payment_counts]
-    print(payment_label)
     payment_data = [payment['payment_count'] for payment in user_payment_counts]
-    print(payment_data)
   
 
     weekly_sales = Order.objects.filter(order_created_date__range=(week_start_date, today_date))
-    print(weekly_sales)
     weekly_sales_count = weekly_sales.count()
     total_weekly_sales = weekly_sales.aggregate(total_amount = Sum('order_total_amount'))['total_amount']
-  
     weekday_names =['mon','tue','wen','thur','fri','sat','sun']
 
-
-    # Prepare the data for the pie chart
-
-
     daily_brand_sales = OrderProduct.objects.values('product__product_brand__brand_name', 'created_at').annotate(total_quantity=Sum('quantity'))
-    for i in daily_brand_sales:
-        print(i,"  DAILY BRAND SALES ===========")
 
-    # Group the data by brand and calculate the total quantity sold per brand per day
     brand_sales_per_day = {}
     for sale in daily_brand_sales:
         brand_name = sale['product__product_brand__brand_name']
         order_date = sale['created_at'].date()
         total_quantity = sale['total_quantity']
-        print(total_quantity,brand_name ,order_date)
 
         if brand_name not in brand_sales_per_day:
             brand_sales_per_day[brand_name] = {}
 
         brand_sales_per_day[brand_name][order_date] = total_quantity
-       
-
+    
     return render(request, 'admin/admin_dashboard.html', {
         "daily_total_revenue":daily_total_revenue,
         "weekly_total_revenue":weekly_total_revenue,

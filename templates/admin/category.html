@@ -36,6 +36,7 @@
               <label for="categoryImage" class="form-label">Category Image</label>
               <input type="file" class="form-control" id="categoryImage" name="category_image" required>
             </div>
+           
 
             <div class="form-group">
               <label for="categoriestatus" class="form-label">Status</label>
@@ -78,8 +79,8 @@
               <tr>
                 <td scope="row">{{ c.id }}</td>
                 <td>{{ c.category_name }}</td>
-             {% if c.category_image %}
-                <td class="align-middle"><img src="{{ c.category_image.url }}" alt="{{ c.category_name }}" width="50px" height="50px"></td>
+             {% if  c.category_image  %}
+                <td class="align-middle"><img src="{{c.category_image.url}}" alt="{{ c.category_name }}" width="50px" height="50px"></td>
               {% else %}
                 <td class="align-middle"><img src="{% static 'default/download.png' %}" alt="Default Image" width="50px" height="50px"></td>
               {% endif %}
@@ -104,10 +105,10 @@
             </div>
 
 
-            <div class="form-group">
+            {% comment %} <div class="form-group">
               <label for="existingImage" class="form-label">Existing Image</label>
               <img src="{{ c.category_image.url }}" alt="{{ c.category_name }}" width="50px" height="50px">
-              </div>  
+              </div> {% endcomment %}
 
                  <!-- Change Image -->
                  <div class="form-group">
