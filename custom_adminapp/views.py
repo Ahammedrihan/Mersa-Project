@@ -343,8 +343,6 @@ def get_variant_details(request):
     variant_id = request.GET.get('variantId')
     try:
         variant = Variant.objects.select_related('product').prefetch_related('images').get(id=variant_id)
-
-        
         variant_data = {
             'product_image': variant.images.first().image1.url,
             'product_price': variant.offer_price,
@@ -353,11 +351,8 @@ def get_variant_details(request):
             'variant_name': variant.variant_name,
             'variant_stock': variant.variant_stock,
             'variant_status': variant.variant_status,
-            
-            
             # Include other variant details as needed
         }
-
         return JsonResponse(variant_data)
     except Variant.DoesNotExist:
         return JsonResponse({'error': 'Variant not found'}, status=404)
@@ -377,7 +372,6 @@ def orders(request):
     page = request.GET.get('page')
     paged_order = paginator.get_page(page)
     order_items = OrderProduct.objects.filter()
-   
     order_status = OrderProduct.STATUS
     return render(request,"admin/admin_orders.html",{"orders":paged_order,"order_items":order_items,"choices":order_status,"order_count":order_count})
 
@@ -386,7 +380,6 @@ def orders(request):
 
 @login_required(login_url='adminlogin')
 def change_order_status(request):
-
     if request.method == 'POST':
         order_id = request.POST.get('order_item_id')
         order_status_update = request.POST.get('order_status')

@@ -12,6 +12,7 @@ from django.contrib import messages
 
 
 def cart(request):
+    context = {}
     try:
         if request.user.is_authenticated:
             cart = Cart.objects.filter(cart_id = request.user, user = request.user)
@@ -24,9 +25,9 @@ def cart(request):
             cart_item.variant_image_url = image1_url
         coupons = Coupon.objects.filter(is_active = True )
         context ={
-        "cart_items":cart_items,
-        "cart":cart,
-        "coupons":coupons,
+          "cart_items":cart_items,
+          "cart":cart,
+          "coupons":coupons,
               }
     except ObjectDoesNotExist:
         pass
@@ -54,7 +55,6 @@ def add_cart(request,product_id):
             cart = Cart.objects.get(cart_id=current_user,user = current_user)
         except Cart.DoesNotExist:
             cart = Cart.objects.create(cart_id=current_user,user =current_user)
-
         try:
             cart_item = CartItem.objects.get(product=product,user=current_user,variant_id=variant_id,cart = cart)
             cart_item.cart_quantity +=1 
@@ -149,7 +149,7 @@ def checkout(request):
        return redirect ('userlogin')
     
     addresses = Profile.objects.filter(user=request.user)
-    cart = Cart.objects.get(cart_id =request.user)
+    cart = Cart.objects.get(cart_id = request.user)
 
     balance = Wallet.objects.get(user = request.user)
     cart_items = CartItem.objects.filter(user = request.user)
