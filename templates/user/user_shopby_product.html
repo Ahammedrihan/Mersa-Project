@@ -31,23 +31,42 @@
             <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
           </ol>
           <div class="carousel-inner">
-            {% for variant_image in variant_images  %}
+            {% for variant_image in variant_images %}
             <div class="carousel-item active">
-              <a href="{{variant_image.image1.url}}" class="image-popup">
-              <img class="d-block w-100" src="{{ variant_image.image1.url }}" alt="First slide">
+              <a href="{{ variant_image.image1.url }}" class="image-popup">
+                <img class="d-block w-100" src="{{ variant_image.image1.url }}" alt="First slide">
               </a>
-            </div>
-            <div class="carousel-item">
-              <a href="{{variant_image.image2.url}}" class="image-popup">
-              <img class="d-block w-100" src="{{variant_image.image2.url}}" alt="Second slide">
-            </a>
-            </div>
-            <div class="carousel-item">
-              <a href="{{variant_image.image3.url}}" class="image-popup">
-              <img class="d-block w-100" src="{{variant_image.image3.url}}" alt="Third slide">
-            </a>
-            </div>
-            {% endfor %}
+            </div> 
+            {% if variant_image.image2 and variant_image.image3 %}
+              <div class="carousel-item">
+                <a href="{{ variant_image.image2.url }}" class="image-popup">
+                  <img class="d-block w-100" src="{{ variant_image.image2.url }}" alt="Second slide">
+                </a>
+              </div>
+              <div class="carousel-item">
+                <a href="{{ variant_image.image3.url }}" class="image-popup">
+                  <img class="d-block w-100" src="{{ variant_image.image3.url }}" alt="Third slide">
+                </a>
+              </div>
+            {% else %}
+              <div class="carousel-item">
+                <a href="{{ variant_image.image1.url }}" class="image-popup">
+                  <img class="d-block w-100" src="{{ variant_image.image1.url }}" alt="Second slide">
+                </a>
+              </div>
+              <div class="carousel-item">
+                <a href="{{ variant_image.image1.url }}" class="image-popup">
+                  <img class="d-block w-100" src="{{ variant_image.image1.url }}" alt="Third slide">
+                </a>
+              </div>
+            {% endif %}
+          {% endfor %}
+          
+          
+          
+          
+          
+          
           </div>
           <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>

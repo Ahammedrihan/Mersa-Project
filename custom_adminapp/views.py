@@ -281,7 +281,35 @@ class AddVariant(FormView):
         product = Product.objects.get(id=self.kwargs.get('product_id'))
         context['product'] = product
         return context
-    
+
+# from django.urls import reverse
+# def edit_variant(request, variant_id):
+#     variant = Variant.objects.get(id=variant_id)
+#     product_id = variant.product.id  
+
+#     if request.method == 'POST':
+#         variant.variant_name = request.POST.get('name')
+#         variant.mrp = request.POST.get('mrp')
+#         variant.discount = request.POST.get('discount')
+#         variant.offer_price = request.POST.get('offer_price')
+#         variant.variant_status = request.POST.get('variant_status')
+#         variant.variant_stock = request.POST.get('variant_stock')
+#         variant.save()
+#         image1 = request.FILES.get('image1')
+#         image2 = request.FILES.get('image2')
+#         image3 = request.FILES.get('image3')
+#         variant_image, created = VariantImage.objects.get_or_create(variant=variant)
+#         variant_image.image1 = image1 or variant_image.image1
+#         variant_image.image2 = image2 or variant_image.image2
+#         variant_image.image3 = image3 or variant_image.image3
+#         variant_image.save()
+
+#         return redirect(reverse('product', args=[product_id]))
+
+#     else:
+#         context = {'variant': variant}
+#         return render(request, 'admin/edit-variant.html', context)
+
 
 
 

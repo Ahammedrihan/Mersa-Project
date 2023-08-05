@@ -15,8 +15,8 @@ def cart(request):
     context = {}
     try:
         if request.user.is_authenticated:
-            cart = Cart.objects.filter(cart_id = request.user, user = request.user)
-            cart_items = CartItem.objects.filter(user = request.user, is_active =True)
+            cart = Cart.objects.get(cart_id = request.user, user = request.user)
+            cart_items = CartItem.objects.filter(cart_id = cart, is_active =True)
         else:
             cart = Cart.objects.get(cart_id = _cart_id(request))
             cart_items = CartItem.objects.filter(cart =cart, is_active =True)
