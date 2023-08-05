@@ -8,7 +8,7 @@
     }
 
     .container {
-      max-width: 800px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 20px;
       text-align: center;
@@ -57,9 +57,9 @@
 </div>
 
 
-
+<div class="container">
     
-<div class="container" style="margin: 0 auto;width: 80%;padding: 50px;background: #f1f1f1;margin-top: 50px;margin-bottom: 50px;">
+<div  style="margin: 0 auto;width: 100%;padding: 10px;background: #f1f1f1;margin-top: 50px;margin-bottom: 50px;">
   <div class="row invoice row-printable">
       <div class="col-md-12">
           <!-- col-lg-12 start here -->
@@ -145,27 +145,9 @@
                                               <td class="text-center">{{ item.varaiant.mrp }}</td>
                                               <td class="text-center">{{ item.varaiant.offer_price }}</td>
                                               <td class="text-center">{{ item.varaiant.discount }}</td>
-                                              <td>
-                                                  {% if item.product_status == 'Cancelled' %}
-                                                  <p class ="text-danger">Cancelled</p>
-                                                  
-                                                  {% elif item.product_status == 'Pending' %}
-                                                      <a href="{% url 'cancel_product' item.id %}" class="btn btn-danger">Cancel</a>
-                                                     
-                                                  {% elif item.product_status == 'Delivered' %}
-                                                      <p class ="text-primary">Delivered</p>
-                                                      <a href="{% url 'return_product' item.id %}" class="btn btn-warning">Return</a>
-                                                  {% elif item.product_status == 'Returned' %}
-                                                        <p class ="text-danger">Returned</p>
-                                                  {% elif item.product_status == 'Confirmed' %}
-                                                        <p class ="text-primary">Order confirmed</p>
-                                                  {% elif item.product_status == 'Out for Shipping' %}
-                                                        <p class ="text-primary">Product Out for Shipping</p>
-                                                  {% elif item.product_status == 'Out for Delivery' %}
-                                                     <p class ="text-primary">Product Out for Delivery</p>
+                                              <td class="text-center">{{ item.product_status }}</td>
 
-                                                  {% endif %}
-                                              </td>
+                                              
                                           </tr>
                                           {% endfor %}
                                       </tbody>
@@ -203,6 +185,7 @@
       </div>
       <!-- col-lg-12 end here -->
   </div>
+</div>
 </div>
     
   </div>

@@ -109,7 +109,7 @@ def place_order(request):
         CartItem.objects.filter(user = request.user).delete()
 
         
-    return render(request,"user/user_order_success.html")
+    return redirect('order_success',order_number)
 
 
 
@@ -149,8 +149,66 @@ def order_details(request):#user side
     # else:
     #     return redirect('checkout')
 
-def order_success(request):
-    return render (request,"user/user_order_success.html")
+def order_success(request,order_number):
+    print(order_number,"kjggggggggggggggggggggl")
+    order_items = OrderProduct.objects.filter(order_no__order_number = order_number )
+    order = Order.objects.get(order_number = order_number)
+    total_mrp =0
+    discount =0
+    offer_price =0
+    shipping =0
+    for i in order_items:
+        total_mrp += i.varaiant.mrp * i.quantity
+        discount += i.varaiant.discount * i.quantity
+        offer_price += i.varaiant.offer_price * i.quantity
+    if total_mrp > 10000:
+        shipping = 0
+    else:
+        shipping = 50
+    
+    context ={
+         "order_items":order_items,
+         "order": order,
+         "total_mrp":total_mrp,
+         "offer_price":offer_price,
+         "discount":discount,
+         "shipping":shipping,
+         
+     }
+    return render (request,"user/user_order_success.html",context)
+
+
+
+# def user_profile_order_page_view(request ,order_id):
+#     print(order_id,"order_id")
+#     order_items = OrderProduct.objects.filter(order_no__order_number = order_id )
+    
+#     order = Order.objects.get(order_number = order_id)
+#     total_mrp =0
+#     discount =0
+#     offer_price =0
+#     shipping =0
+
+#     for i in order_items:
+#         total_mrp += i.varaiant.mrp * i.quantity
+#         discount += i.varaiant.discount * i.quantity
+#         offer_price += i.varaiant.offer_price * i.quantity
+#     if total_mrp > 10000:
+#         shipping =0
+#     else:
+#         shipping =50
+
+
+#     context ={
+#         "order_items":order_items,
+#         "order": order,
+#         "total_mrp":total_mrp,
+#         "offer_price":offer_price,
+#         "discount":discount,
+#         "shipping":shipping,
+
+#     }
+#     return render(request, "user/user_profile/user_order_page_view.html", context)
 
 
         
