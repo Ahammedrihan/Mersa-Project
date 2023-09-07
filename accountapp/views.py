@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.decorators.cache import never_cache
 from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import render, get_object_or_404
 from .models import CustomUser
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages 
@@ -15,7 +16,6 @@ from cartapp.models import Cart, CartItem ,Product
 from cartapp.views import _cart_id
 from orderapp.models import Order,OrderProduct ,Profile
 from cartapp.models import Wishlist 
-from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from orderapp.models import Wallet
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
@@ -164,44 +164,7 @@ def shop_page(request):
         }
 
         return render(request, "user/user_shop.html", context)
-
-
-
-# def shop_page(request):
-#     variants = Variant.objects.all().order_by('id')
-#     var_count =variants.count()
-#     paginator = Paginator(variants,9)
-#     page = request.GET.get('page')
-#     paged_product = paginator.get_page(page)
-#     categor = Category.objects.filter(category_status=True).order_by('id')
-
-#     if request.method == "POST":
-#         category = Category.objects.all
-#         selected_category = []
-
-#         if 'all_category' in request.POST:
-
-#             selected_category.extend([str(cat.id) for cat in category])
-#         for cat in category:
-#             if f'category_name_{ cat.id }' in request.POST:
-#                 selected_category.append(request.POST[f'category_name_{ cat.id }' ])
-
-#         min_price = request.POST.get('minValue', None)
-#         max_price = request.POST.get('maxValue', None)
-
-#         products = Product.objects.filter(category__id__in=selected_category)
-#         variants=[]
-#         for p in products:
-#             variants.extend( Variant.objects.filter(product = p, mrp__gte=min_price, mrp__lte=max_price))
-#         context= {
-#             "variants":variants,
-#             "category":category,
-#             "categor":categor,
-#         }
-#         return render(request,"user/user_shop.html",context)
-#     return render(request,"user/user_shop.html")
     
-
 
 @never_cache
 def home_page(request):
@@ -209,10 +172,6 @@ def home_page(request):
     category = Category.objects.all()
     
     return render(request,"user/user_home.html",{"product":products ,"categories":category})
-
-
-   
-   
 
 
 @never_cache
@@ -247,37 +206,7 @@ def user_profile(request):
         else:
             return redirect('userlogin') 
        
-    
 
-        
-
-# def add_address(request):
-#     user = request.user
-#     if request.method == 'POST':
-#         print ('sdhgsvadhg')
-#         first_name = request.POST.get('first_name')
-#         last_name = request.POST.get('last_name')
-#         phone = request.POST.get('phone')
-#         address_line1 = request.POST.get('address_line1')
-#         address_line2 = request.POST.get('address_line2')
-#         city = request.POST.get('city')
-#         state = request.POST.get('state')
-#         country = request.POST.get('country')
-#         postcode = request.POST.get('postcode')
-
-
-#         profile_address = Profile(user=user)
-#         profile_address.first_name=first_name
-#         profile_address.last_name=last_name
-#         profile_address.phone =phone
-#         profile_address.address_line1=address_line1
-#         profile_address.address_line2 = address_line2
-#         profile_address.city = city
-#         profile_address.state = state
-#         profile_address.country = country
-#         profile_address.postcode= postcode
-#         profile_address.save()
-#         return redirect('user_profile')
 
 def add_address(request):
     user = request.user
@@ -313,7 +242,6 @@ def add_address(request):
         return redirect('user_profile')
     
 
-from django.shortcuts import get_object_or_404
 
 def edit_address(request):
     user = request.user

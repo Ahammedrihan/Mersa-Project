@@ -10,7 +10,6 @@ from orderapp.models import Profile
 from django.contrib import messages
 
 
-
 def cart(request):
     context = {}
     try:
@@ -34,7 +33,6 @@ def cart(request):
     return render(request,'user/user_cart.html',context)
 
 
-
 def _cart_id(request):                   
     cart = request.session.session_key  
     if not cart:                           
@@ -42,14 +40,13 @@ def _cart_id(request):
     return cart
 
 
-
 def add_cart(request,product_id):
+    
     current_user = request.user
     product = Product.objects.get(id = product_id)
     variant_number = request.POST.get('variant') 
     quantity = request.POST.get('quantity') 
     variant_id=Variant.objects.get(id=variant_number)
-
     if current_user.is_authenticated:
         try:
             cart = Cart.objects.get(cart_id=current_user,user = current_user)
@@ -64,7 +61,6 @@ def add_cart(request,product_id):
             cart_item.save()
         return redirect('cart')
     else:
-       
         try:
             cart = Cart.objects.get(cart_id=_cart_id(request)) 
         except Cart.DoesNotExist:
@@ -78,8 +74,6 @@ def add_cart(request,product_id):
             cart_item =CartItem.objects.create(product =product,cart_quantity = quantity,cart =cart ,variant=variant_id)
             cart_item.save()
     return redirect('cart')
-
-
 
 @never_cache
 def remove_cart(request,variant_id):
@@ -98,7 +92,6 @@ def remove_cart(request,variant_id):
     except:
         pass
     return redirect('cart')
-
 
 
 def plus_cart(request,variant_id):
@@ -134,7 +127,6 @@ def remove_cart_button(request,variant_id):
         pass
     return redirect('cart')
 
-
 @never_cache
 @login_required(login_url='userlogin')
 def checkout(request):
@@ -160,10 +152,7 @@ def checkout(request):
         "addresses":addresses,
         "balance":balance,
         }
-
     return render(request,'user/user_checkout.html',context)
-
-
 
 def change_Address(request):
 
@@ -178,10 +167,6 @@ def change_Address(request):
             'phone': profile.phone
         })
     return JsonResponse(data)
-
-
-
-
 
 @login_required(login_url='userlogin')
 def add_to_wishlist(request):
@@ -211,10 +196,6 @@ def remove_wishlist(request,product_id):
     wishlist = get_object_or_404(Wishlist, user=request.user, product_id=product_id)
     wishlist.delete()
     return redirect('wishlist_view')
-
-
-
-
 
 
 def apply_coupon(request):
